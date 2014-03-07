@@ -1,0 +1,67 @@
+<!doctype html>
+<html>
+<head>
+<style type="text/css">
+	body {
+		font-family: "Courier New", Consolas, "Lucida Console", Monotype;
+		font-size: 1em;
+		background-color: teal;
+		color: white;
+	}
+	.consoleLike {
+		margin: 10px;
+		border: 2px dotted white;
+		background-color: black;
+		color: yellow;
+		padding: 10px;
+		height: 300px;
+		width: 600px;
+		overflow: scroll;
+
+	}
+</style>
+	<script type="text/javascript" src="graph.js"></script>
+	<script type="text/javascript">
+		var xhr, graphData, graph1;
+		function getXMLHttp() {
+			if (window.XMLHttpRequest) { return new XMLHttpRequest(); } 
+			else { return new ActiveXObject("Microsoft.XMLHTTP"); }
+		}		
+		function runGraphTest() {
+		 	xhr = getXMLHttp();
+		 	xhr.open("GET", "graph1.json", true);
+		 	xhr.send(null);
+		 	xhr.onreadystatechange = function () {
+		 		if (xhr.readyState == 4) {
+		 			graphData = JSON.parse(xhr.responseText);
+		 			graph1 = new Graph("GRAPH_1");
+		 			graph1.createGraphFromJSON(graphData);
+		 			graph1.displayGraph("consoleLike");
+		 		}
+		 	}
+		}
+		function start() {
+			if (window.addEventListener) {
+				window.addEventListener("load", runGraphTest);	
+			} else {
+				window.attachEvent("load", runGraphTest);
+			}
+		}
+		start();		
+	</script>
+</head>
+<body>
+	<code>
+		<strong>
+		Graph Theory + JSON + XMLHttp Experiments in JS</strong><br/>
+		Abhishek Ghosh [github.com/abhishekcghosh]<br/>
+		-----------------------------------------------<br/>
+		Hint: <br/>
+		* View Browser Console for more information.<br/>		
+		* Enable "Log XMLHttpRequests" for better results.
+	</code>
+	</br/>
+	<textarea class="consoleLike" id="consoleLike">
+	</textarea>
+</body>
+</html>
