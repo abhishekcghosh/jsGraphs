@@ -211,7 +211,6 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 	var markedVertex = new Array(this.vertices.length);
 	var startVertex = this.vertices[startFromVertex];
 	var i, j;
-	var depth = 0;
 	var verboseStr = "";
 	if (verbose) { verboseStr += "Starting Depth-First Search for Vertex [" + searchVertex +"] from Vertex [" + startFromVertex + "].\n" }
 	vStack.push(startVertex.id);
@@ -219,15 +218,16 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 		// dump present stack condition
 		if (verbose) { verboseStr += "DFS Stack Status: [" + vStack.join(",") + "]\n" ;	}
 		// fetch a vertex to search from the stack
-		i = vStack.pop();
-		if (verbose) { verboseStr += "Reached Vertex[" + i + "]\n"; }
+		i = vStack.pop();		
+		if (verbose) { verboseStr += "Popped Vertex[" + i + "]\n"; }		
 		// if the vertex has yet not been gone through	
 		if (markedVertex[i] != true) {
+			if (verbose) { verboseStr += "Reached Vertex[" + i + "]\n"; }
 			// check if we found our required vertex
 			if (this.vertices[i].id == searchVertex) {
 				// yay! we dound our vertex
 				if (verbose) { verboseStr += "Yay! We just found the searched Vertex [" + searchVertex +"] !!!\n"; } 
-				return { searchResult: true, verboseData: verboseStr };
+				return { searchResult: true, verboseData: verboseStr, depth: foundAtDepth };
 			}
 			// label this vertex as discovered
 			markedVertex[i] = true;
@@ -239,23 +239,25 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 					// loop, add vertices to the stack
 					for (j = 0; j < this.vertices[i].conn.length; j++) {
 						// add vertex to stack
-						if (verbose) { verboseStr += "Pushing Vertex [" + this.vertices[i].conn[j] +"] into Stack\n"; }
 						vStack.push(this.vertices[i].conn[j]);
+						if (verbose) { verboseStr += "Pushed Vertex [" + this.vertices[i].conn[j] +"] into Stack\n"; }						
 					}
 				} else {
 					// only one edge exists, add to stack
-					if (verbose) { verboseStr += "Pushing Vertex [" + this.vertices[i].conn +"] into Stack\n"; }
 					vStack.push(this.vertices[i].conn);
-				}	
+					if (verbose) { verboseStr += "Pushed Vertex [" + this.vertices[i].conn +"] into Stack\n"; }					
+				}
 			} else {
 				// no edges linked to this vertex exists
 				// nothing to do here actually
 				// this condition will not even be reached if 
 				// requestBD was true during graph generation from JSON
 			}
+		} else {
+			// nothing here too, simply popping the next vertex next 
 		}
 	}
 	// oops, we did not find our search vertex :(
 	if (verbose) { verboseStr += "Oops! We couldn't find the searched Vertex [" + searchVertex +"] :(\n"; }
-	return { searchResult: false, verboseData: verboseStr };
+	return { searchResult: false, verboseData: verboseStr, depth: foundAtDepth };
 }
