@@ -227,7 +227,7 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 			if (this.vertices[i].id == searchVertex) {
 				// yay! we dound our vertex
 				if (verbose) { verboseStr += "Yay! We just found the searched Vertex [" + searchVertex +"] !!!\n"; } 
-				return { searchResult: true, verboseData: verboseStr, depth: foundAtDepth };
+				return { searchResult: true, verboseData: verboseStr };
 			}
 			// label this vertex as discovered
 			markedVertex[i] = true;
@@ -259,5 +259,5 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 	}
 	// oops, we did not find our search vertex :(
 	if (verbose) { verboseStr += "Oops! We couldn't find the searched Vertex [" + searchVertex +"] :(\n"; }
-	return { searchResult: false, verboseData: verboseStr, depth: foundAtDepth };
+	return { searchResult: false, verboseData: verboseStr };
 }

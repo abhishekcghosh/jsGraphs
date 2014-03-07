@@ -68,25 +68,21 @@
  			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #1 with searchVertex = 5, startFromVertex = 0 in verbose mode.");
  			graphDFSResult = graph.depthFirstSearch(5, 0, true);
  			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
- 			writeToConsoles("\nFound at Depth: " + graphDFSResult.depth);
  			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
  			// do DFS (search 7, from 3, verbose mode)
  			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #2 with searchVertex = 7, startFromVertex = 0 in verbose mode.");
  			graphDFSResult = graph.depthFirstSearch(7, 3, true);
  			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
- 			writeToConsoles("\nFound at Depth: " + graphDFSResult.depth);
  			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
  			// do DFS (search 1, from 5, non verbose mode)
  			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #3 with searchVertex = 1, startFromVertex = 5 in non verbose mode.");
- 			graphDFSResult = graph.depthFirstSearch(1, 5, true);
+ 			graphDFSResult = graph.depthFirstSearch(1, 5, false);
  			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
- 			writeToConsoles("\nFound at Depth: " + graphDFSResult.depth);
  			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
  			// do DFS (search 9, from 2, non verbose mode)
  			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #4 with searchVertex = 9, startFromVertex = 2 in non verbose mode.");
  			graphDFSResult = graph.depthFirstSearch(9, 2, false);
  			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
- 			writeToConsoles("\nFound at Depth: " + graphDFSResult.depth);
  			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
 
 		}
