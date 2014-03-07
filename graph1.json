@@ -27,6 +27,6 @@
 	],
 	"properties" : 
 		{
-			"bidirectional" : true
+			"bidirectionalEdges" : true
 		}
 }

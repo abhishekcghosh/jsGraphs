@@ -121,12 +121,12 @@ function Graph(graphName) {
 		],
 		"properties" : 
 			{
-				"bidirectional" : true
+				"bidirectionalEdges" : true
 			}
 	}
 */
 Graph.prototype.createGraphFromJSON = function (jsonGraph) {
-	var requestBD = jsonGraph.properties.bidirectional;
+	var requestBD = jsonGraph.properties.bidirectionalEdges;
 	if (jsonGraph.vertices instanceof Array) {
 		// check if multiple vertices are at all present, then loop over
 		this.vertices = new Array(jsonGraph.vertices.length);
@@ -171,8 +171,10 @@ Graph.prototype.displayGraph = function (elementToWriteTo) {
 		graphStr += " Vertex[" + i + "]. Connected with: " + vertexStr + "\n"; 
 	}
 	if (typeof elementToWriteTo != "undefined") {
+		// assuming a textarea element
 		document.getElementById(elementToWriteTo).value += graphStr;
 	} 
+	// good idea to mirror dump into console anyway
 	console.log (graphStr);	
 }
 
