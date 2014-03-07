@@ -1,0 +1,32 @@
+{		
+	"vertices" : [
+		{
+			"id" : 0,
+			"conn" : [1, 2]
+		},
+		{
+			"id" : 1,
+			"conn" : [2, 3, 4]
+		},
+		{
+			"id" : 2,
+			"conn" : [3, 4]
+		},
+		{
+			"id" : 3,
+			"conn" : [4, 5]
+		},
+		{
+			"id" : 5
+		},
+		{
+			"id" : 4,
+			"conn" : 5
+		}
+		
+	],
+	"properties" : 
+		{
+			"bidirectionalEdges" : false
+		}
+}

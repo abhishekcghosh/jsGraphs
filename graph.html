@@ -22,7 +22,7 @@
 </style>
 	<script type="text/javascript" src="graph.js"></script>
 	<script type="text/javascript">
-		var xhr, graphData, graph1;
+		var xhr1, xhr2, graphData1, graphData2, graph1, graph2;
 		function getXMLHttp() {
 			if (window.XMLHttpRequest) { return new XMLHttpRequest(); } 
 			else { return new ActiveXObject("Microsoft.XMLHTTP"); }
@@ -32,41 +32,58 @@
 			console.log(str);
 		}
 		function runGraphTest() {
-		 	xhr = getXMLHttp();
-		 	xhr.open("GET", "graph1.json", true);
-		 	xhr.send(null);
-		 	xhr.onreadystatechange = function () {
-		 		if (xhr.readyState == 4) {
-		 			graphData = JSON.parse(xhr.responseText);
+		 	// graph1, bidirectional edges
+		 	xhr1 = getXMLHttp();
+		 	xhr1.open("GET", "graph1.json", true);
+		 	xhr1.send(null);
+		 	xhr1.onreadystatechange = function () {
+		 		if (xhr1.readyState == 4) {
+		 			graphData1 = JSON.parse(xhr1.responseText);
 		 			graph1 = new Graph("GRAPH_1");
-		 			graph1.createGraphFromJSON(graphData);
+		 			graph1.createGraphFromJSON(graphData1);
 		 			writeToConsoles(graph1.displayGraph());
-		 			doDFSTests();
+		 			doDFSTests(graph1);
 		 			
 		 		}
 		 	}
+		 	// graph2, directional edges
+		 	xhr2 = getXMLHttp();
+		 	xhr2.open("GET", "graph2.json", true);
+		 	xhr2.send(null);
+		 	xhr2.onreadystatechange = function () {
+		 		if (xhr2.readyState == 4) {
+		 			graphData2 = JSON.parse(xhr2.responseText);
+		 			graph2 = new Graph("GRAPH_2");
+		 			graph2.createGraphFromJSON(graphData2);
+		 			writeToConsoles(graph2.displayGraph());
+		 			doDFSTests(graph2);
+		 			
+		 		}
+		 	}
+
 		}
-		function doDFSTests() {
+		function doDFSTests(graph) {
 			// do DFS (search 5, from 0, verbose mode)
- 			writeToConsoles("\nRunning DFS Test #1 with searchVertex = 5, startFromVertex = 0 in verbose mode.");
- 			graphDFS1Result = graph1.depthFirstSearch(5, 0, true);
- 			writeToConsoles("\nDFS Complete. Result: " + graphDFS1Result.searchResult);
- 			writeToConsoles("\nDFS Run Data:\n " + graphDFS1Result.verboseData);
+			var graphDFSResult;
+ 			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #1 with searchVertex = 5, startFromVertex = 0 in verbose mode.");
+ 			graphDFSResult = graph.depthFirstSearch(5, 0, true);
+ 			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
+ 			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
  			// do DFS (search 7, from 3, verbose mode)
- 			writeToConsoles("\nRunning DFS Test #2 with searchVertex = 5, startFromVertex = 0 in verbose mode.");
- 			graphDFS1Result = graph1.depthFirstSearch(7, 3, true);
- 			writeToConsoles("\nDFS Complete. Result: " + graphDFS1Result.searchResult);
- 			writeToConsoles("\nDFS Run Data:\n " + graphDFS1Result.verboseData);
+ 			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #2 with searchVertex = 7, startFromVertex = 0 in verbose mode.");
+ 			graphDFSResult = graph.depthFirstSearch(7, 3, true);
+ 			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
+ 			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
  			// do DFS (search 1, from 5, non verbose mode)
- 			writeToConsoles("\nRunning DFS Test #3 with searchVertex = 1, startFromVertex = 5 in non verbose mode.");
- 			graphDFS1Result = graph1.depthFirstSearch(1, 5, false);
- 			writeToConsoles("\nDFS Complete. Result: " + graphDFS1Result.searchResult);
- 			writeToConsoles("\nDFS Run Data:\n " + graphDFS1Result.verboseData);
+ 			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #3 with searchVertex = 1, startFromVertex = 5 in non verbose mode.");
+ 			graphDFSResult = graph.depthFirstSearch(1, 5, false);
+ 			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
+ 			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
  			// do DFS (search 9, from 2, non verbose mode)
- 			writeToConsoles("\nRunning DFS Test #4 with searchVertex = 9, startFromVertex = 2 in non verbose mode.");
- 			graphDFS1Result = graph1.depthFirstSearch(9, 2, false);
- 			writeToConsoles("\nDFS Complete. Result: " + graphDFS1Result.searchResult);
- 			writeToConsoles("\nDFS Run Data:\n " + graphDFS1Result.verboseData);
+ 			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #4 with searchVertex = 9, startFromVertex = 2 in non verbose mode.");
+ 			graphDFSResult = graph.depthFirstSearch(9, 2, false);
+ 			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
+ 			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
 
 		}
 		function start() {

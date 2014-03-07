@@ -83,6 +83,14 @@ function Graph(graphName) {
 	this.vertices = [];		
 }
 
+// graph name getters and setters
+Graph.prototype.getGraphName = function () {
+	return this.graphName;
+}
+Graph.prototype.setGraphName = function (newName) {
+	this.graphName = newName;
+}
+
 // obtain a json data of a graph representation
 // generate the graph
 // sample data:
@@ -196,7 +204,8 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 	}
 	// initiate dfs routine 
 	// note: algo implementation assumes that vertex id and vertex index in
-	// vertices array are equal (redundant data I know, but the for time being
+	// vertices array are equal. No worries there too since the graph is created
+	// from the JSON in similar way too. (Redundant data I know, but the for time being
 	// to keep things simple...)
 	var vStack = [];
 	var markedVertex = new Array(this.vertices.length);
@@ -235,16 +244,18 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 					}
 				} else {
 					// only one edge exists, add to stack
-					if (verbose) { verboseStr += "Pushing Vertex with Id [" + this.vertices[i].conn +"] into Stack\n"; }
+					if (verbose) { verboseStr += "Pushing Vertex [" + this.vertices[i].conn +"] into Stack\n"; }
 					vStack.push(this.vertices[i].conn);
 				}	
 			} else {
 				// no edges linked to this vertex exists
 				// nothing to do here actually
+				// this condition will not even be reached if 
+				// requestBD was true during graph generation from JSON
 			}
 		}
 	}
 	// oops, we did not find our search vertex :(
-	if (verbose) { verboseStr += "Oops! We couldn't the searched Vertex with Id [" + searchVertex +"] :(\n"; }
+	if (verbose) { verboseStr += "Oops! We couldn't find the searched Vertex [" + searchVertex +"] :(\n"; }
 	return { searchResult: false, verboseData: verboseStr };
 }
