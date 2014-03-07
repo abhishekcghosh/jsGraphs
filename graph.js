@@ -135,6 +135,9 @@ Graph.prototype.createGraphFromJSON = function (jsonGraph) {
 			v = jsonGraph.vertices[i];
 			// want to keep program internal logic of vertices and json naming separate, 
 			// so create nodes following data instead of directly using the json objects
+			// ** The graph is created from the JSON in such a way that the Vertex Id is always
+			// equal to the index of that Vertex's reference in the graph's vertices array
+			// This is very important in this design since the DFS, BFS implementations depend on it. **
 			vi = new Vertex(v.id);			
 			this.vertices[v.id] = vi;
 		}
@@ -158,7 +161,7 @@ Graph.prototype.createGraphFromJSON = function (jsonGraph) {
 }
 
 // display strings describing the graph
-Graph.prototype.displayGraph = function (elementToWriteTo) {
+Graph.prototype.displayGraph = function () {
 	var i;
 	var graphStr = "", vertextStr = "";
 	graphStr += "\nDisplaying data for graph: " + this.graphName + "\n";
@@ -170,12 +173,78 @@ Graph.prototype.displayGraph = function (elementToWriteTo) {
 		}
 		graphStr += " Vertex[" + i + "]. Connected with: " + vertexStr + "\n"; 
 	}
-	if (typeof elementToWriteTo != "undefined") {
-		// assuming a textarea element
-		document.getElementById(elementToWriteTo).value += graphStr;
-	} 
-	// good idea to mirror dump into console anyway
-	console.log (graphStr);	
+	return graphStr;	
 }
 
-
+// GRAPH TRAVERSALS: DEPTH-FIRST-SEARCH
+// this implements a sample DFS algorithm in the graph
+// the purpose is very simple, just search for a vertex
+// with a given vertex id.
+// accepts 3 parameters
+//	1. searchVertex  - the vertex id of the vertex to search for
+//  2. startFromNode - the vertex id to start the search from. 
+//						[optional, takes the first node found the 
+//						the graph is not given]
+//	3. verbose - boolean to determine if detailed DFS traversal data is generated
+Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verbose) {
+	// default startFromNode to zeroth vertex id if not supplied
+	if (typeof startFromVertex == "undefined") {
+		startFromVertex = this.vertices[0].id;
+	}
+	if (typeof verbose == "undefined") {
+		verbose = false;
+	}
+	// initiate dfs routine 
+	// note: algo implementation assumes that vertex id and vertex index in
+	// vertices array are equal (redundant data I know, but the for time being
+	// to keep things simple...)
+	var vStack = [];
+	var markedVertex = new Array(this.vertices.length);
+	var startVertex = this.vertices[startFromVertex];
+	var i, j;
+	var depth = 0;
+	var verboseStr = "";
+	if (verbose) { verboseStr += "Starting Depth-First Search for Vertex [" + searchVertex +"] from Vertex [" + startFromVertex + "].\n" }
+	vStack.push(startVertex.id);
+	while (vStack.length > 0) {
+		// dump present stack condition
+		if (verbose) { verboseStr += "DFS Stack Status: [" + vStack.join(",") + "]\n" ;	}
+		// fetch a vertex to search from the stack
+		i = vStack.pop();
+		if (verbose) { verboseStr += "Reached Vertex[" + i + "]\n"; }
+		// if the vertex has yet not been gone through	
+		if (markedVertex[i] != true) {
+			// check if we found our required vertex
+			if (this.vertices[i].id == searchVertex) {
+				// yay! we dound our vertex
+				if (verbose) { verboseStr += "Yay! We just found the searched Vertex [" + searchVertex +"] !!!\n"; } 
+				return { searchResult: true, verboseData: verboseStr };
+			}
+			// label this vertex as discovered
+			markedVertex[i] = true;
+			//console.log (markedVertex.join(","));
+			if (this.vertices[i].hasOwnProperty("conn")) {
+				// some edges linked to this vertex exists
+				// if multiple edges exist
+				if (this.vertices[i].conn instanceof Array) {
+					// loop, add vertices to the stack
+					for (j = 0; j < this.vertices[i].conn.length; j++) {
+						// add vertex to stack
+						if (verbose) { verboseStr += "Pushing Vertex [" + this.vertices[i].conn[j] +"] into Stack\n"; }
+						vStack.push(this.vertices[i].conn[j]);
+					}
+				} else {
+					// only one edge exists, add to stack
+					if (verbose) { verboseStr += "Pushing Vertex with Id [" + this.vertices[i].conn +"] into Stack\n"; }
+					vStack.push(this.vertices[i].conn);
+				}	
+			} else {
+				// no edges linked to this vertex exists
+				// nothing to do here actually
+			}
+		}
+	}
+	// oops, we did not find our search vertex :(
+	if (verbose) { verboseStr += "Oops! We couldn't the searched Vertex with Id [" + searchVertex +"] :(\n"; }
+	return { searchResult: false, verboseData: verboseStr };
+}

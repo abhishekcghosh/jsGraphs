@@ -3,7 +3,7 @@
 <head>
 <style type="text/css">
 	body {
-		font-family: "Courier New", Consolas, "Lucida Console", Monotype;
+		font-family: "Courier New", "Lucida Console", Monotype;
 		font-size: 1em;
 		background-color: teal;
 		color: white;
@@ -14,8 +14,8 @@
 		background-color: black;
 		color: yellow;
 		padding: 10px;
-		height: 300px;
-		width: 600px;
+		height: 400px;
+		width: 80%;
 		overflow: scroll;
 
 	}
@@ -27,6 +27,10 @@
 			if (window.XMLHttpRequest) { return new XMLHttpRequest(); } 
 			else { return new ActiveXObject("Microsoft.XMLHTTP"); }
 		}		
+		function writeToConsoles(str) {
+			document.getElementById("consoleLike").value += str;
+			console.log(str);
+		}
 		function runGraphTest() {
 		 	xhr = getXMLHttp();
 		 	xhr.open("GET", "graph1.json", true);
@@ -36,9 +40,34 @@
 		 			graphData = JSON.parse(xhr.responseText);
 		 			graph1 = new Graph("GRAPH_1");
 		 			graph1.createGraphFromJSON(graphData);
-		 			graph1.displayGraph("consoleLike");
+		 			writeToConsoles(graph1.displayGraph());
+		 			doDFSTests();
+		 			
 		 		}
 		 	}
+		}
+		function doDFSTests() {
+			// do DFS (search 5, from 0, verbose mode)
+ 			writeToConsoles("\nRunning DFS Test #1 with searchVertex = 5, startFromVertex = 0 in verbose mode.");
+ 			graphDFS1Result = graph1.depthFirstSearch(5, 0, true);
+ 			writeToConsoles("\nDFS Complete. Result: " + graphDFS1Result.searchResult);
+ 			writeToConsoles("\nDFS Run Data:\n " + graphDFS1Result.verboseData);
+ 			// do DFS (search 7, from 3, verbose mode)
+ 			writeToConsoles("\nRunning DFS Test #2 with searchVertex = 5, startFromVertex = 0 in verbose mode.");
+ 			graphDFS1Result = graph1.depthFirstSearch(7, 3, true);
+ 			writeToConsoles("\nDFS Complete. Result: " + graphDFS1Result.searchResult);
+ 			writeToConsoles("\nDFS Run Data:\n " + graphDFS1Result.verboseData);
+ 			// do DFS (search 1, from 5, non verbose mode)
+ 			writeToConsoles("\nRunning DFS Test #3 with searchVertex = 1, startFromVertex = 5 in non verbose mode.");
+ 			graphDFS1Result = graph1.depthFirstSearch(1, 5, false);
+ 			writeToConsoles("\nDFS Complete. Result: " + graphDFS1Result.searchResult);
+ 			writeToConsoles("\nDFS Run Data:\n " + graphDFS1Result.verboseData);
+ 			// do DFS (search 9, from 2, non verbose mode)
+ 			writeToConsoles("\nRunning DFS Test #4 with searchVertex = 9, startFromVertex = 2 in non verbose mode.");
+ 			graphDFS1Result = graph1.depthFirstSearch(9, 2, false);
+ 			writeToConsoles("\nDFS Complete. Result: " + graphDFS1Result.searchResult);
+ 			writeToConsoles("\nDFS Run Data:\n " + graphDFS1Result.verboseData);
+
 		}
 		function start() {
 			if (window.addEventListener) {
