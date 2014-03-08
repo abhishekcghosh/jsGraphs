@@ -3,7 +3,7 @@
 <head>
 <style type="text/css">
 	body {
-		font-family: "Courier New", "Lucida Console", Monotype;
+		font-family: "Courier New", "Lucida Console", Monospace;
 		font-size: 1em;
 		background-color: #111;
 		color: #DD4814;
@@ -219,6 +219,7 @@
 				});
 
 				console.log("Just thought that using colors from the Ubuntu palette will be fun ;)");
+				console.log("In case you see XHR not loading the JSON data when you are using the files from any local directory, blame the browser's awesome web security against cross origin requests and then try something like putting the files on the www directory of a web-server that maybe running on your machine locally so that the same origin policy isn't violated...");
 
 			} else {
 				//window.attachEvent("load", runGraphTest);
