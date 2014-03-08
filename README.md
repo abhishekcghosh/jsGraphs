@@ -45,11 +45,15 @@ On a second note, this approach was *chosen to begin with* to keep the ability t
 	* **Depth-First Search (DFS)** - `depthFirstSearch(searchVertex, StartFromVertex, verboseMode)` 
 	* **Bread-First Seach (BFS)** - `breadthFirstSearch(searchVertex, StartFromVertex, verboseMode)`
 	* **Dijkstra's Algorithm** (Least-Cost / Shortest-Path) - `dijkstra(searchVertex, StartFromVertex, verboseMode)` (This implementation of Dijkstra's Algorithm uses a **Priority Queue**)
+* **Random Graph Generation** feature to generate graphs with huge number of vertices, random edges, random edge weights and the ability to **download** and save the generated random graph in **JSON** format.
+* Ready-to-run **100 randomly generated test cases** for each of the graph traversal algorithms on two sample graphs each with **200 vertices**, both uni-directional and bi-directional edged graphs available for easy testing.
+
 
 Graphs can be easily created from compatible **JSON** data. A sample is shown here:
 
 <pre>
 {      
+   "graphName": "GRAPH1",
    "vertices" : [
       {
          "id" : 0,
