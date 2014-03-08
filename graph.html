@@ -51,21 +51,29 @@
  			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #1 with searchVertex = 5, startFromVertex = 0 in verbose mode.");
  			graphDFSResult = graph.depthFirstSearch(5, 0, true);
  			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
+ 			writeToConsoles("\nPath traced: " + graphDFSResult.pathTrace);
+ 			writeToConsoles("\nPath Length: " + graphDFSResult.pathLength);
  			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
  			// do DFS (search 7, from 3, verbose mode)
  			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #2 with searchVertex = 7, startFromVertex = 0 in verbose mode.");
  			graphDFSResult = graph.depthFirstSearch(7, 3, true);
  			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
+ 			writeToConsoles("\nPath traced: " + graphDFSResult.pathTrace);
+ 			writeToConsoles("\nPath Length: " + graphDFSResult.pathLength);
  			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
  			// do DFS (search 1, from 5, non verbose mode)
  			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #3 with searchVertex = 1, startFromVertex = 5 in non verbose mode.");
  			graphDFSResult = graph.depthFirstSearch(1, 5, false);
  			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
+ 			writeToConsoles("\nPath traced: " + graphDFSResult.pathTrace);
+ 			writeToConsoles("\nPath Length: " + graphDFSResult.pathLength);
  			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
  			// do DFS (search 9, from 2, non verbose mode)
  			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #4 with searchVertex = 9, startFromVertex = 2 in non verbose mode.");
  			graphDFSResult = graph.depthFirstSearch(9, 2, false);
  			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
+ 			writeToConsoles("\nPath traced: " + graphDFSResult.pathTrace);
+ 			writeToConsoles("\nPath Length: " + graphDFSResult.pathLength);
  			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
 
 		}
@@ -75,21 +83,29 @@
  			writeToConsoles("\nRunning " + graph.getGraphName() + " BFS Test #1 with searchVertex = 5, startFromVertex = 0 in verbose mode.");
  			graphBFSResult = graph.breadthFirstSearch(5, 0, true);
  			writeToConsoles("\nBFS Complete. Result: " + graphBFSResult.searchResult);
+ 			writeToConsoles("\nPath traced: " + graphBFSResult.pathTrace);
+ 			writeToConsoles("\nPath Length: " + graphBFSResult.pathLength);
  			writeToConsoles("\nBFS Run Data:\n " + graphBFSResult.verboseData);
  			// do BFS (search 7, from 3, verbose mode)
  			writeToConsoles("\nRunning " + graph.getGraphName() + " BFS Test #2 with searchVertex = 7, startFromVertex = 0 in verbose mode.");
  			graphBFSResult = graph.breadthFirstSearch(7, 3, true);
  			writeToConsoles("\nBFS Complete. Result: " + graphBFSResult.searchResult);
+ 			writeToConsoles("\nPath traced: " + graphBFSResult.pathTrace);
+ 			writeToConsoles("\nPath Length: " + graphBFSResult.pathLength);
  			writeToConsoles("\nBFS Run Data:\n " + graphBFSResult.verboseData);
  			// do BFS (search 1, from 5, non verbose mode)
  			writeToConsoles("\nRunning " + graph.getGraphName() + " BFS Test #3 with searchVertex = 1, startFromVertex = 5 in non verbose mode.");
  			graphBFSResult = graph.breadthFirstSearch(1, 5, false);
  			writeToConsoles("\nBFS Complete. Result: " + graphBFSResult.searchResult);
+ 			writeToConsoles("\nPath traced: " + graphBFSResult.pathTrace);
+ 			writeToConsoles("\nPath Length: " + graphBFSResult.pathLength);
  			writeToConsoles("\nBFS Run Data:\n " + graphBFSResult.verboseData);
  			// do BFS (search 9, from 2, non verbose mode)
  			writeToConsoles("\nRunning " + graph.getGraphName() + " BFS Test #4 with searchVertex = 9, startFromVertex = 2 in non verbose mode.");
  			graphBFSResult = graph.breadthFirstSearch(9, 2, false);
  			writeToConsoles("\nBFS Complete. Result: " + graphBFSResult.searchResult);
+ 			writeToConsoles("\nPath traced: " + graphBFSResult.pathTrace);
+ 			writeToConsoles("\nPath Length: " + graphBFSResult.pathLength);
  			writeToConsoles("\nBFS Run Data:\n " + graphBFSResult.verboseData);
 
 		}

@@ -208,6 +208,11 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 	var markedVertex = new Array(this.vertices.length);
 	var startVertex = this.vertices[startFromVertex];
 	var i, j;
+	// path tracing
+	var bfsPath = [];
+	var prevVertex = new Array(this.vertices.length);
+	for (i = 0; i < prevVertex.length; i++) { prevVertex[i] = -1; }	
+	// verbose feedback
 	var verboseStr = "";
 	if (verbose) { verboseStr += "Starting Depth-First Search for Vertex [" + searchVertex +"] from Vertex [" + startFromVertex + "].\n" }
 	vStack.push(startVertex.id);
@@ -223,14 +228,23 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 			// check if we found our required vertex
 			if (this.vertices[i].id == searchVertex) {
 				// yay! we dound our vertex
-				if (verbose) { verboseStr += "Yay! We just found the searched Vertex [" + searchVertex +"] !!!\n"; } 
-				return { searchResult: true, verboseData: verboseStr };
+				// trace the path
+				var pathTraceItem = searchVertex;
+				while(pathTraceItem != startFromVertex) {
+					bfsPath.push(pathTraceItem);
+					pathTraceItem = prevVertex[pathTraceItem];
+				}
+				bfsPath.push(startFromVertex);
+				if (verbose) { verboseStr += "Yay! We just found Vertex [" + searchVertex +"] !!!\n"; } 
+				return { searchResult: true, verboseData: verboseStr, pathTrace: bfsPath.join(" <- "), pathLength: (bfsPath.length - 1) };
 			}
 			// label this vertex as discovered
 			markedVertex[i] = true;			
 			for (j = 0; j < this.vertices[i].conn.length; j++) {
 				// add vertex to stack
 				vStack.push(this.vertices[i].conn[j]);
+				// add to prevVertex for path tracing later
+				if (prevVertex[this.vertices[i].conn[j]] == -1)  { prevVertex[this.vertices[i].conn[j]] = i; }
 				if (verbose) { verboseStr += "Pushed Vertex [" + this.vertices[i].conn[j] +"] into Stack\n"; }	
 			}								
 		} else {
@@ -238,8 +252,8 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 		}
 	}
 	// oops, we did not find our search vertex :(
-	if (verbose) { verboseStr += "Oops! We couldn't find the searched Vertex [" + searchVertex +"] :(\n"; }
-	return { searchResult: false, verboseData: verboseStr };
+	if (verbose) { verboseStr += "Oops! We couldn't find Vertex [" + searchVertex +"] :(\n"; }
+	return { searchResult: false, verboseData: verboseStr, pathTrace: "Path not found!", pathLength: null };
 }
 
 
@@ -255,10 +269,15 @@ Graph.prototype.breadthFirstSearch = function (searchVertex, startFromVertex, ve
 		verbose = false;
 	}
 	// initiate BFS routine
-	vQueue = [];
+	var vQueue = [];
 	var markedVertex = new Array(this.vertices.length);
 	var startVertex = this.vertices[startFromVertex];
 	var i, j;
+	// path tracing
+	var bfsPath = [];
+	var prevVertex = new Array(this.vertices.length);
+	for (i = 0; i < prevVertex.length; i++) { prevVertex[i] = -1; }	
+	// verbose feedback
 	var verboseStr = "";
 	if (verbose) { verboseStr += "Starting Breadth-First Search for Vertex [" + searchVertex +"] from Vertex [" + startFromVertex + "].\n" }
 	vQueue.push(startVertex.id);
@@ -274,14 +293,23 @@ Graph.prototype.breadthFirstSearch = function (searchVertex, startFromVertex, ve
 			// check if we found our required vertex
 			if (this.vertices[i].id == searchVertex) {
 				// yay! we dound our vertex
-				if (verbose) { verboseStr += "Yay! We just found the searched Vertex [" + searchVertex +"] !!!\n"; } 
-				return { searchResult: true, verboseData: verboseStr };
+				// trace the path
+				var pathTraceItem = searchVertex;
+				while(pathTraceItem != startFromVertex) {
+					bfsPath.push(pathTraceItem);
+					pathTraceItem = prevVertex[pathTraceItem];
+				}
+				bfsPath.push(startFromVertex);
+				if (verbose) { verboseStr += "Yay! We just found Vertex [" + searchVertex +"] !!!\n"; } 
+				return { searchResult: true, verboseData: verboseStr, pathTrace: bfsPath.join(" <- "), pathLength: (bfsPath.length - 1) };
 			}
 			// label this vertex as discovered
 			markedVertex[i] = true;
 			for (j = 0; j < this.vertices[i].conn.length; j++) {
 				// add vertex to stack
 				vQueue.push(this.vertices[i].conn[j]);
+				// add to prevVertex for path tracing later
+				if (prevVertex[this.vertices[i].conn[j]] == -1)  { prevVertex[this.vertices[i].conn[j]] = i; }
 				if (verbose) { verboseStr += "Enqueued Vertex [" + this.vertices[i].conn[j] +"] into Queue\n"; }						
 			}	
 		} else {
@@ -290,6 +318,6 @@ Graph.prototype.breadthFirstSearch = function (searchVertex, startFromVertex, ve
 		}
 	}
 	// oops, we did not find our search vertex :(
-	if (verbose) { verboseStr += "Oops! We couldn't find the searched Vertex [" + searchVertex +"] :(\n"; }
-	return { searchResult: false, verboseData: verboseStr };
+	if (verbose) { verboseStr += "Oops! We couldn't find Vertex [" + searchVertex +"] :(\n"; }
+	return { searchResult: false, verboseData: verboseStr, pathTrace: "Path not found!", pathLength: null };
 }
