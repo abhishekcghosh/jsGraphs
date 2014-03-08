@@ -5,11 +5,11 @@
 			"conn" : [
 						{ 
 							"dest": 1, 
-							"weight": 10
+							"weight": 2
 						},
 						{ 
 							"dest": 2, 
-							"weight": 10
+							"weight": 4
 						}
 			]
 		},
@@ -18,15 +18,15 @@
 			"conn" : [
 						{ 
 							"dest": 2, 
-							"weight": 10
+							"weight": 8
 						},
 						{ 
 							"dest": 3, 
-							"weight": 10
+							"weight": 16
 						},
 						{ 
 							"dest": 4, 
-							"weight": 10
+							"weight": 32
 						}
 			]
 		},
@@ -35,11 +35,11 @@
 			"conn" : [
 						{ 
 							"dest": 3, 
-							"weight": 10
+							"weight": 64
 						},
 						{ 
 							"dest": 4, 
-							"weight": 10
+							"weight": 128
 						}
 			]
 		},
@@ -48,22 +48,41 @@
 			"conn" : [
 						{ 
 							"dest": 4, 
-							"weight": 10
+							"weight": 256
 						},
 						{ 
 							"dest": 5, 
-							"weight": 10
+							"weight": 512
 						}
 			]
 		},
 		{
-			"id" : 5
+			"id" : 5,
+			"conn": {
+						"dest" : 6
+					}
 		},
 		{
 			"id" : 4,
 			"conn" : {
-						"dest": 5
+						"dest" : 5,
+						"weight" : 1024
 					}
+		},
+		{
+			"id" : 6
+		},
+		{
+			"id" : 7
+		},
+		{
+			"id" : 8
+		},
+		{
+			"id" : 9
+		},
+		{
+			"id" : 10
 		}
 		
 	],

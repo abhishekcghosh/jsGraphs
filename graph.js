@@ -322,7 +322,7 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 				}
 				dfsPath.push(startFromVertex);
 				if (verbose) { verboseStr += "Yay! We just found Vertex [" + searchVertex +"] !!!\n"; } 
-				return { searchResult: true, verboseData: verboseStr, pathTrace: dfsPath.join(" <- "), pathLength: (dfsPath.length - 1) };
+				return { searchResult: true, verboseData: verboseStr, pathTrace: dfsPath.join(" <= "), pathLength: (dfsPath.length - 1) };
 			}
 			// label this vertex as discovered
 			markedVertex[i] = true;			
@@ -364,7 +364,8 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 */
 // NOTE: IMPLEMENTED BFS ALGORITHM IS EDGE-WEIGHT INDEPENDENT 
 // IF YOU ARE LOOKING FOR A LEAST-WEIGHT SHORTEST PATH ALGORITHM, 
-// REFER TO DJIKSTRA'S ALGORITHM
+// REFER TO DIJKSTRA'S ALGORITHM (PROVIDED EDGE WEIGHTS ARE NON-NEGATIVE)
+// EVEN OTHERWISE, FOR EDGES WITH POSSIBLE NEGATIVE WEIGHT, GO FOR BELLMAN-FORD ALGORITHM
 Graph.prototype.breadthFirstSearch = function (searchVertex, startFromVertex, verbose) {
 	if (typeof startFromVertex == "undefined") {
 		startFromVertex = this.vertices[0].getId();
@@ -405,7 +406,7 @@ Graph.prototype.breadthFirstSearch = function (searchVertex, startFromVertex, ve
 				}
 				bfsPath.push(startFromVertex);
 				if (verbose) { verboseStr += "Yay! We just found Vertex [" + searchVertex +"] !!!\n"; } 
-				return { searchResult: true, verboseData: verboseStr, pathTrace: bfsPath.join(" <- "), pathLength: (bfsPath.length - 1) };
+				return { searchResult: true, verboseData: verboseStr, pathTrace: bfsPath.join(" <= "), pathLength: (bfsPath.length - 1) };
 			}
 			// label this vertex as discovered
 			markedVertex[i] = true;
@@ -424,4 +425,140 @@ Graph.prototype.breadthFirstSearch = function (searchVertex, startFromVertex, ve
 	// oops, we did not find our search vertex :(
 	if (verbose) { verboseStr += "Oops! We couldn't find Vertex [" + searchVertex +"] :(\n"; }
 	return { searchResult: false, verboseData: verboseStr, pathTrace: "Path not found!", pathLength: null };
+}
+
+
+
+
+
+// implement the DJIKSTRA's algorithm for the graph 
+// also assumes that this.vertices[index].id = index (like the DFS, BFS algos do.)
+// not to worry since graph generation method takes care of it
+// only note that you must take care that the vertices array length and 
+// vertices serailization indexes top concurs in the JSON file for the graph 
+Graph.prototype.dijkstra = function (searchVertex, startFromVertex, verbose) {
+	if (typeof startFromVertex == "undefined") {
+		startFromVertex = this.vertices[0].getId();
+	}
+	if (typeof verbose == "undefined") {
+		verbose = false;
+	}
+
+	// PRIORITY QUEUE
+	function PQueue () {
+		this.qV = [];
+		this.qP = [];
+	}
+	PQueue.prototype.isEmpty = function () {
+		if (this.qV.length > 0) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+	PQueue.prototype.addWithPriority = function(vertex, priority) {
+		this.qV.push(vertex);
+		this.qP.push(priority);
+	}
+	PQueue.prototype.extractMin = function() {
+		var i, minP, minPi;
+		minP = this.qP[0];
+		minPi = 0;
+		for (i = 0; i < this.qP.length; i++) {
+			if (minP > this.qP[i]) {
+				minP = this.qP[i];
+				minPi = i;
+			}
+		}
+		var v = this.qV[minPi];
+		this.qV.splice(minPi, 1);
+		this.qP.splice(minPi, 1);
+		return v;
+	}
+	PQueue.prototype.decreasePriority = function (vertex, newPriority) {
+		var vId = vertex.getId();
+		var i;
+		var indx = null;
+		for(i = 0; i < this.qV.length; i++) {
+			if (this.qV[i].getId() == vId) {
+				indx = i;
+				break;
+			}
+		}
+		if (indx != null) {
+			this.qP[indx] = newPriority;
+		}
+	}
+	PQueue.prototype.stringifyPQ = function () {
+		var i; 
+		var PQStr = ""
+		for (i = 0; i < this.qV.length; i++) {
+			PQStr += this.qV[i].getId() + ", ";
+		}
+
+		return "[" + PQStr.substr(0, PQStr.length - 2) + "]";
+	}
+
+	var verboseStr = "";
+	var distArr = new Array(this.vertices.length);
+	var prevArr = new Array(this.vertices.length);
+	var PQ = new PQueue();
+	var i;
+	if (verbose) { verboseStr += "Starting search for Least-cost Shortest Path from Vertex[" + startFromVertex + "] to Vertex[" + searchVertex + "] using Dijkstra's Algorithm..."; }
+	
+	distArr[startFromVertex] = 0;
+	if (verbose) { verboseStr += "\nSet Distances from [Starting Vertex] to [Starting Vertex] to 0."; }
+
+	for (i = 0; i < this.vertices.length; i++) {
+		if (this.vertices[i].getId() != startFromVertex) {distArr[this.vertices[i].getId()] = Infinity; }		
+		prevArr[this.vertices[i].getId()] = -1;
+		PQ.addWithPriority(this.vertices[i], distArr[this.vertices[i].getId()]);		
+	}
+	if (verbose) { verboseStr += "\nSet Distances from [Starting Vertex] to all other Vertices to Infinity..."; }
+	if (verbose) { verboseStr += "\nAdded all Vertices to PQueue, prioritized on Distances from Starting Vertex."; }
+
+	
+	
+	if (verbose) { verboseStr += "\nStarting loop till PQueue is empty..."; }
+	var currVertex, relDist;
+	while (!PQ.isEmpty()) {
+		currVertex = PQ.extractMin();
+		if (distArr[currVertex.getId()] == Infinity) {
+			// if the minPriority distance itself is INFINITY, then short-circuit the algorithm, since test failed, no more nodes reachable
+			if (verbose) { verboseStr += "\nAlgorithm stopped since it was found that Vertex[" + searchVertex + "] can never be reached."; }
+			break;
+		}
+		if (verbose) { verboseStr += "\nExtracted MinPriority Vertex[" + currVertex.getId() + "] from PQueue."; }
+		if (verbose) { verboseStr += "\n PQueue Status: " + PQ.stringifyPQ() };		
+		for (i = 0; i < currVertex.conn.length; i++) {
+			relDist = distArr[currVertex.getId()] + currVertex.conn[i].weight;
+			//console.log (relDist + ": for a connected vertex[" + currVertex.conn[i].dest + "] of vertex[" + currVertex.getId() + "]");
+			if (relDist < distArr[currVertex.conn[i].dest]) {
+				distArr[currVertex.conn[i].dest] = relDist;
+				if (verbose) { verboseStr += "\n Update distance for connected Vertex[" + currVertex.conn[i].dest + "] to " + distArr[currVertex.conn[i].dest] + ". "; }
+				prevArr[currVertex.conn[i].dest] = currVertex.getId();
+				PQ.decreasePriority(this.getVertex(currVertex.conn[i].dest), relDist);
+				if (verbose) { verboseStr += "Update priority value in PQueue for the same..."; }
+			}			
+		}
+		if (verbose) { verboseStr += "\n Distances: [" + distArr.join(", ") + "]"; }
+	}
+
+	if (prevArr[searchVertex] != -1 && prevArr[searchVertex] != undefined) {
+		// node has been reached in shortest path, so output traced path and cost incurred
+		if (verbose) { verboseStr += "\nYay! Path found to Vertex[" + searchVertex + "] !!!\n"; }
+		var djkPath = [];
+		pathVertex = searchVertex;
+		while (pathVertex != startFromVertex) {
+			djkPath.push(pathVertex);
+			pathVertex = prevArr[pathVertex];
+		}
+		djkPath.push(pathVertex);
+		return { searchResult: true, verboseData: verboseStr, pathTrace: djkPath.join(" <= "), pathCost: distArr[searchVertex] };
+	} else {
+		// could not reach the searched vertex
+		if (verbose) { verboseStr += "\nOops! Path not found to Vertex[" + searchVertex + "] :(\n"; }
+		return { searchResult: false, verboseData: verboseStr, pathTrace: "Path not found!", pathCost: null };
+	}
+
 }
