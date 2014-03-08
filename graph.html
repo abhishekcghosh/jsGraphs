@@ -1,6 +1,7 @@
 <!doctype html>
 <html>
 <head>
+<title>jsGraphs</title>
 <style type="text/css">
 	body {
 		font-family: "Courier New", "Lucida Console", Monospace;
@@ -23,6 +24,7 @@
 
 	}
 	input[type="button"] {
+		min-width: 430px;
 		background-color: #2C001E;
 		border: 2px solid #5E2750;
 		color: #fff;
@@ -30,6 +32,7 @@
 		padding: 4px;
 		font-family: "Courier New", "Lucida Console", Monotype;
 		font-size: 0.8em;
+		margin: 2px 10px;
 	}
 	input[type="button"]:hover {
 		background-color: #DD4814;
@@ -40,124 +43,124 @@
 	<script type="text/javascript" src="graph.js"></script>
 	<script type="text/javascript">
 		var xhr1, xhr2, graphData1, graphData2, graph1, graph2;
+		
 		function getXMLHttp() {
 			if (window.XMLHttpRequest) { return new XMLHttpRequest(); } 
 			else { return new ActiveXObject("Microsoft.XMLHTTP"); }
 		}		
+		
 		function writeToConsoles(str) {
 			var txtArea = document.getElementById("consoleLike")
 			txtArea.value += str;
 			txtArea.scrollTop = txtArea.scrollHeight;
 			console.log(str);
-		}		
-		function doDFSTests(graph) {
-			// do DFS (search 5, from 0, verbose mode)
-			var graphDFSResult;
- 			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #1 with searchVertex = 5, startFromVertex = 0 in verbose mode.");
- 			graphDFSResult = graph.depthFirstSearch(5, 0, true);
- 			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
- 			writeToConsoles("\nPath traced: " + graphDFSResult.pathTrace);
- 			writeToConsoles("\nPath Length: " + graphDFSResult.pathLength);
- 			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
- 			// do DFS (search 7, from 3, verbose mode)
- 			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #2 with searchVertex = 7, startFromVertex = 0 in verbose mode.");
- 			graphDFSResult = graph.depthFirstSearch(7, 3, true);
- 			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
- 			writeToConsoles("\nPath traced: " + graphDFSResult.pathTrace);
- 			writeToConsoles("\nPath Length: " + graphDFSResult.pathLength);
- 			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
- 			// do DFS (search 1, from 5, non verbose mode)
- 			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #3 with searchVertex = 1, startFromVertex = 5 in non verbose mode.");
- 			graphDFSResult = graph.depthFirstSearch(1, 5, false);
- 			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
- 			writeToConsoles("\nPath traced: " + graphDFSResult.pathTrace);
- 			writeToConsoles("\nPath Length: " + graphDFSResult.pathLength);
- 			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
- 			// do DFS (search 9, from 2, non verbose mode)
- 			writeToConsoles("\nRunning " + graph.getGraphName() + " DFS Test #4 with searchVertex = 9, startFromVertex = 2 in non verbose mode.");
- 			graphDFSResult = graph.depthFirstSearch(9, 2, false);
- 			writeToConsoles("\nDFS Complete. Result: " + graphDFSResult.searchResult);
- 			writeToConsoles("\nPath traced: " + graphDFSResult.pathTrace);
- 			writeToConsoles("\nPath Length: " + graphDFSResult.pathLength);
- 			writeToConsoles("\nDFS Run Data:\n " + graphDFSResult.verboseData);
+		}	
 
+		function doThisDFS(graph, searchVertex, startFromVertex, verbose, testCount) {
+			var graphDFSResult;
+			var consoleData = "";
+ 			consoleData += "\n\nRunning " + graph.getGraphName() + " DFS Test #" + testCount + " with searchVertex = " + searchVertex + ", startFromVertex = " + startFromVertex + ".";
+ 			graphDFSResult = graph.depthFirstSearch(searchVertex, startFromVertex, verbose);
+ 			consoleData += "\nDFS Run Complete. Result: " + graphDFSResult.searchResult;
+ 			consoleData += "\nPath traced: " + graphDFSResult.pathTrace;
+ 			consoleData += "\nPath length: " + graphDFSResult.pathLength;
+ 			if (verbose) { consoleData += "\nDFS Run Data:\n " + graphDFSResult.verboseData; }
+ 			return consoleData;
+		}
+		function doDFSTests(graph) {
+			// randomize entire dijkstra tests.. much like profiling
+			var vCount = graph.vertices.length;
+			var searchV, startV;
+			var verbMode = false;
+			var consoleDataAll = "";
+			var consoleData = "";
+			var oriTitle = document.title;
+			for( i = 1; i <= 100; i++) {
+				// will run 100 random bfs tests with randomly generated nodes
+				searchV = Math.floor(Math.random() * vCount);
+				startV = Math.floor(Math.random() * vCount);		
+				document.title = (i) + "% Complete";	
+				consoleData = doThisDFS(graph, searchV, startV, verbMode, i);
+				consoleDataAll += consoleData;
+			}	
+			writeToConsoles(consoleDataAll);
+			setTimeout(function () { document.title = oriTitle; }, 1000);
+		}
+
+		function doThisBFS(graph, searchVertex, startFromVertex, verbose, testCount) {
+			var graphBFSResult;
+			var consoleData = "";
+ 			consoleData += "\n\nRunning " + graph.getGraphName() + " BFS Test #" + testCount + " with searchVertex = " + searchVertex + ", startFromVertex = " + startFromVertex + ".";
+ 			graphBFSResult = graph.breadthFirstSearch(searchVertex, startFromVertex, verbose);
+ 			consoleData += "\nBFS Run Complete. Result: " + graphBFSResult.searchResult;
+ 			consoleData += "\nPath traced: " + graphBFSResult.pathTrace;
+ 			consoleData += "\nPath length: " + graphBFSResult.pathLength;
+ 			if (verbose) { consoleData += "\nBFS Run Data:\n " + graphBFSResult.verboseData; }
+ 			return consoleData;
 		}
 		function doBFSTests(graph) {
-			// do BFS (search 5, from 0, verbose mode)
-			var graphBFSResult;
- 			writeToConsoles("\nRunning " + graph.getGraphName() + " BFS Test #1 with searchVertex = 5, startFromVertex = 0 in verbose mode.");
- 			graphBFSResult = graph.breadthFirstSearch(5, 0, true);
- 			writeToConsoles("\nBFS Complete. Result: " + graphBFSResult.searchResult);
- 			writeToConsoles("\nPath traced: " + graphBFSResult.pathTrace);
- 			writeToConsoles("\nPath Length: " + graphBFSResult.pathLength);
- 			writeToConsoles("\nBFS Run Data:\n " + graphBFSResult.verboseData);
- 			// do BFS (search 7, from 3, verbose mode)
- 			writeToConsoles("\nRunning " + graph.getGraphName() + " BFS Test #2 with searchVertex = 7, startFromVertex = 0 in verbose mode.");
- 			graphBFSResult = graph.breadthFirstSearch(7, 3, true);
- 			writeToConsoles("\nBFS Complete. Result: " + graphBFSResult.searchResult);
- 			writeToConsoles("\nPath traced: " + graphBFSResult.pathTrace);
- 			writeToConsoles("\nPath Length: " + graphBFSResult.pathLength);
- 			writeToConsoles("\nBFS Run Data:\n " + graphBFSResult.verboseData);
- 			// do BFS (search 1, from 5, non verbose mode)
- 			writeToConsoles("\nRunning " + graph.getGraphName() + " BFS Test #3 with searchVertex = 1, startFromVertex = 5 in non verbose mode.");
- 			graphBFSResult = graph.breadthFirstSearch(1, 5, false);
- 			writeToConsoles("\nBFS Complete. Result: " + graphBFSResult.searchResult);
- 			writeToConsoles("\nPath traced: " + graphBFSResult.pathTrace);
- 			writeToConsoles("\nPath Length: " + graphBFSResult.pathLength);
- 			writeToConsoles("\nBFS Run Data:\n " + graphBFSResult.verboseData);
- 			// do BFS (search 9, from 2, non verbose mode)
- 			writeToConsoles("\nRunning " + graph.getGraphName() + " BFS Test #4 with searchVertex = 9, startFromVertex = 2 in non verbose mode.");
- 			graphBFSResult = graph.breadthFirstSearch(9, 2, false);
- 			writeToConsoles("\nBFS Complete. Result: " + graphBFSResult.searchResult);
- 			writeToConsoles("\nPath traced: " + graphBFSResult.pathTrace);
- 			writeToConsoles("\nPath Length: " + graphBFSResult.pathLength);
- 			writeToConsoles("\nBFS Run Data:\n " + graphBFSResult.verboseData);
-
+			// randomize entire dijkstra tests.. much like profiling
+			var vCount = graph.vertices.length;
+			var searchV, startV;
+			var verbMode = false;
+			var consoleDataAll = "";
+			var consoleData = "";
+			var oriTitle = document.title;
+			for( i = 1; i <= 100; i++) {
+				// will run 100 random bfs tests with randomly generated nodes
+				searchV = Math.floor(Math.random() * vCount);
+				startV = Math.floor(Math.random() * vCount);		
+				document.title = (i) + "% Complete";	
+				consoleData = doThisBFS(graph, searchV, startV, verbMode, i);
+				consoleDataAll += consoleData;
+			}	
+			writeToConsoles(consoleDataAll);
+			setTimeout(function () { document.title = oriTitle; }, 1000);	
+		}
+		function doThisDijkstra(graph, searchVertex, startFromVertex, verbose, testCount) {
+			var graphDJKResult;
+ 			var consoleData = "";
+ 			consoleData += "\n\nRunning " + graph.getGraphName() + " Dijkstra Test #" + testCount + " with searchVertex = " + searchVertex + ", startFromVertex = " + startFromVertex + ".";
+ 			graphDJKResult = graph.dijkstra(searchVertex, startFromVertex, verbose);
+ 			consoleData += "\nShortest-Path (using Dijkstra's Algorithm) Run Complete. Result: " + graphDJKResult.searchResult;
+ 			consoleData += "\nShortest-Path traced: " + graphDJKResult.pathTrace;
+ 			consoleData += "\nPath cost (minimum): " + graphDJKResult.pathCost;
+ 			if (verbose) { consoleData += "\nShortest-Path Run Data:\n " + graphDJKResult.verboseData; }
+ 			return consoleData;
 		}
 		function doDijkstraTests(graph) {
-			// do BFS (search 5, from 0, verbose mode)
-			var graphDJKResult;
- 			writeToConsoles("\nRunning " + graph.getGraphName() + " Dijkstra Test #1 with searchVertex = 5, startFromVertex = 0 in verbose mode.");
- 			graphDJKResult = graph.dijkstra(5, 0, true);
- 			writeToConsoles("\nShortest-Path (using Dijkstra's Algorithm) Run Complete. Result: " + graphDJKResult.searchResult);
- 			writeToConsoles("\nShortest-Path traced: " + graphDJKResult.pathTrace);
- 			writeToConsoles("\nPath cost (minimum): " + graphDJKResult.pathCost);
- 			writeToConsoles("\nShortest-Path Run Data:\n " + graphDJKResult.verboseData);
- 			// do BFS (search 7, from 3, verbose mode)
- 			writeToConsoles("\nRunning " + graph.getGraphName() + " Dijkstra Test #2 with searchVertex = 7, startFromVertex = 3 in verbose mode.");
- 			graphDJKResult = graph.dijkstra(7, 3, true);
- 			writeToConsoles("\nShortest-Path (using Dijkstra's Algorithm) Run Complete. Result: " + graphDJKResult.searchResult);
- 			writeToConsoles("\nShortest-Path traced: " + graphDJKResult.pathTrace);
- 			writeToConsoles("\nPath cost (minimum): " + graphDJKResult.pathCost);
- 			writeToConsoles("\nShortest-Path Run Data:\n " + graphDJKResult.verboseData);
- 			// do BFS (search 1, from 5, non verbose mode)
- 			writeToConsoles("\nRunning " + graph.getGraphName() + " Dijkstra Test #3 with searchVertex = 1, startFromVertex = 5 in non verbose mode.");
- 			graphDJKResult = graph.dijkstra(1, 5, false);
- 			writeToConsoles("\nShortest-Path (using Dijkstra's Algorithm) Run Complete. Result: " + graphDJKResult.searchResult);
- 			writeToConsoles("\nShortest-Path traced: " + graphDJKResult.pathTrace);
- 			writeToConsoles("\nPath cost (minimum): " + graphDJKResult.pathCost);
- 			writeToConsoles("\nShortest-Path Run Data:\n " + graphDJKResult.verboseData);
- 			// do BFS (search 9, from 2, non verbose mode)
- 			writeToConsoles("\nRunning " + graph.getGraphName() + " Dijkstra Test #4 with searchVertex = 9, startFromVertex = 2 in non verbose mode.");
- 			graphDJKResult = graph.dijkstra(9, 2, false);
- 			writeToConsoles("\nShortest-Path (using Dijkstra's Algorithm) Run Complete. Result: " + graphDJKResult.searchResult);
- 			writeToConsoles("\nShortest-Path traced: " + graphDJKResult.pathTrace);
- 			writeToConsoles("\nPath cost (minimum): " + graphDJKResult.pathCost);
- 			writeToConsoles("\nShortest-Path Run Data:\n " + graphDJKResult.verboseData);
-
+			// randomize entire dijkstra tests.. much like profiling
+			var vCount = graph.vertices.length;
+			var searchV, startV;
+			var verbMode = false;
+			var consoleDataAll = "";
+			var consoleData = "";
+			var oriTitle = document.title;
+			for( i = 1; i <= 100; i++) {
+				// will run 100 random dijkstra tests with randomly generated nodes
+				searchV = Math.floor(Math.random() * vCount);
+				startV = Math.floor(Math.random() * vCount);		
+				document.title = (i) + "% Complete";
+				consoleData = doThisDijkstra(graph, searchV, startV, verbMode, i);
+				consoleDataAll += consoleData;
+			}	
+			writeToConsoles(consoleDataAll);
+			setTimeout(function () { document.title = oriTitle; }, 1000);	
 		}
 
 
 		function start() {
 			if (window.addEventListener) {
+				
 				document.getElementById("btn_clearConsoleLike").addEventListener("click", function () {
 					document.getElementById("consoleLike").value = "";
 				});
+
 				document.getElementById("btn_loadGraph1").addEventListener("click", function () {
-					var fileName = "graph3.json";
+					var fileName = "RandomGraph200B.json";
 					writeToConsoles("\nLoading " + fileName + "...");
 					xhr1 = getXMLHttp();
-				 	xhr1.open("GET", "graph3.json", true);
+				 	xhr1.open("GET", fileName, true);
 				 	xhr1.send(null);
 				 	xhr1.onreadystatechange = function () {
 				 		if (xhr1.readyState == 4) {
@@ -173,11 +176,12 @@
 				 	document.getElementById("btn_BFSGraph1").style.visibility = "visible";
 				 	document.getElementById("btn_DJKGraph1").style.visibility = "visible";
 				});
+
 				document.getElementById("btn_loadGraph2").addEventListener("click", function () {
-					var fileName = "graph4.json";
+					var fileName = "RandomGraph200D.json";
 					writeToConsoles("\nLoading "+ fileName + "...");
 					xhr2 = getXMLHttp();
-				 	xhr2.open("GET", "graph4.json", true);
+				 	xhr2.open("GET", fileName, true);
 				 	xhr2.send(null);
 				 	xhr2.onreadystatechange = function () {
 				 		if (xhr2.readyState == 4) {
@@ -193,29 +197,64 @@
 				 	document.getElementById("btn_BFSGraph2").style.visibility = "visible";
 				 	document.getElementById("btn_DJKGraph2").style.visibility = "visible";
 				});
+
 				document.getElementById("btn_DFSGraph1").addEventListener("click", function () {
 					doDFSTests(graph1);
-				});
-				document.getElementById("btn_DFSGraph2").addEventListener("click", function () {
-					doDFSTests(graph2);
 				});
 				document.getElementById("btn_BFSGraph1").addEventListener("click", function () {
 					doBFSTests(graph1);
 				});
-				document.getElementById("btn_BFSGraph2").addEventListener("click", function () {
-					doBFSTests(graph2);
-				});
 				document.getElementById("btn_DJKGraph1").addEventListener("click", function () {
 					doDijkstraTests(graph1);
 				});
-				document.getElementById("btn_DJKGraph2").addEventListener("click", function () {
-					doDijkstraTests(graph2);
-				});
 				document.getElementById("btn_DumpGraph1").addEventListener("click", function () {
 					writeToConsoles(JSON.stringify(graph1, null, 4));
-				});
+				});				
+				
 				document.getElementById("btn_DumpGraph2").addEventListener("click", function () {
 					writeToConsoles(JSON.stringify(graph2, null, 4));
+				});
+				document.getElementById("btn_DFSGraph2").addEventListener("click", function () {
+					doDFSTests(graph2);
+				});
+				document.getElementById("btn_BFSGraph2").addEventListener("click", function () {
+					doBFSTests(graph2);
+				});
+				document.getElementById("btn_DJKGraph2").addEventListener("click", function () {
+					doDijkstraTests(graph2);
+				});				
+
+				document.getElementById("btn_giveMeAGraph").addEventListener("click", function () {
+					var sure = confirm("To generate a random graph, please provide values for the six configuration parameters in the following dialog boxes. \n\nCancelling the dialogs will just use default values for the parameters as provided in the dialogs instead of actually cancelling the process.\n\nProceed with graph generation ?");
+					if (!sure) { return; }
+					var graphName = prompt("Provide a name for the Graph: ", "RandomGraph1");					
+						if (graphName == null) { graphName = "RandomGraph1"; }
+					var vertexCount = prompt("Number of Vertices to generate ? ", 10);
+						if (vertexCount == null) { vertexCount = 10; }
+					var bidirectional = confirm("Have bidirectional edges ? Press OK for YES, Cancel for NO");					
+					var minWeight = prompt("Min Weight for edges ?", 10);
+						if (minWeight == null) { minWeight = 10; }
+					var maxWeight = prompt("Max Weight for edges ?", 50);
+						if (maxWeight == null) { maxWeight = 50; }
+					var weighed = confirm("Generate randomly weighed edges ? Press OK for YES, Cancel for NO");
+					var confirmData = "Press OK to download a randomly generate graph JSON file with the following parameters:\n";
+						confirmData += "\n\nGraphName: " + graphName; 
+						confirmData += "\n\nVertex Count: " + vertexCount;
+						confirmData += "\n\nBidirectional Edges: " + bidirectional; 
+						confirmData += "\n\nMin Weight for edges: " + minWeight;
+						confirmData += "\n\nMax Weight for edges: " + maxWeight; 
+						confirmData += "\n\nInclude Randomly generated weight for edges between min and max values: " + weighed;
+						confirmData += "\n\n";
+					alert(confirmData);
+					var randomGraph = giveMeAGraph(graphName, vertexCount, bidirectional, weighed, minWeight, maxWeight);
+					var jsonRandomGraph = JSON.stringify(randomGraph, null, 4);
+					writeToConsoles("\nRandomly Generated Graph: \n" + jsonRandomGraph);
+					var downloadLink = document.createElement("a");
+					downloadLink.href = "data:application/octet-stream;base64," + btoa(jsonRandomGraph);
+					downloadLink.download = graphName + ".json";
+					document.body.appendChild(downloadLink);
+					downloadLink.click();
+					document.body.removeChild(downloadLink);					
 				});
 
 				console.log("Just thought that using colors from the Ubuntu palette will be fun ;)");
@@ -241,21 +280,22 @@
 	<textarea class="consoleLike" id="consoleLike">
 	</textarea>
 	<br/>
-	<input type="button" value="Load 1" id="btn_loadGraph1" />
-	<input type="button" value="Dump 1" id="btn_DumpGraph1" style="visibility: hidden" />
-	<input type="button" value="DFS 1" id="btn_DFSGraph1" style="visibility: hidden" />
-	<input type="button" value="BFS 1" id="btn_BFSGraph1" style="visibility: hidden" />
-	<input type="button" value="Dijkstra 1" id="btn_DJKGraph1" style="visibility: hidden" />
+	<input type="button" value="Clear Console" id="btn_clearConsoleLike" />	
 	<br/>
-	<input type="button" value="Load 2" id="btn_loadGraph2" />
-	<input type="button" value="Dump 2" id="btn_DumpGraph2" style="visibility: hidden" />
-	<input type="button" value="DFS 2" id="btn_DFSGraph2" style="visibility: hidden" />
-	<input type="button" value="BFS 2" id="btn_BFSGraph2" style="visibility: hidden" />
-	<input type="button" value="Dijkstra 2" id="btn_DJKGraph2" style="visibility: hidden" />
+	<input type="button" value="Configure, Generate and Download a new Random Graph" id="btn_giveMeAGraph" />
 	<br/>
-	<input type="button" value="Clear Console" id="btn_clearConsoleLike" />
-	
-
-
+	<br/>
+	<input type="button" value="Case#1: Load Random Graph with 200 Vertices, bidirectional edges" id="btn_loadGraph1" /><br/>
+	<input type="button" value="Case#1: Dump Graph's JSON data" id="btn_DumpGraph1" style="visibility: hidden" /><br/>
+	<input type="button" value="Case#1: Run 100 Random DFS tests" id="btn_DFSGraph1" style="visibility: hidden" /><br/>
+	<input type="button" value="Case#1: Run 100 Random BFS tests" id="btn_BFSGraph1" style="visibility: hidden" /><br/>
+	<input type="button" value="Case#1: Run 100 Random Dijkstra tests" id="btn_DJKGraph1" style="visibility: hidden" /><br/>
+	<br/>
+	<input type="button" value="Case#2: Load Random Graph with 200 Vertices, directional edges" id="btn_loadGraph2" /><br/>
+	<input type="button" value="Case#2: Dump Graph's JSON data" id="btn_DumpGraph2" style="visibility: hidden" /><br/>
+	<input type="button" value="Case#2: Run 100 Random DFS tests" id="btn_DFSGraph2" style="visibility: hidden" /><br/>
+	<input type="button" value="Case#2: Run 100 Random BFS tests" id="btn_BFSGraph2" style="visibility: hidden" /><br/>
+	<input type="button" value="Case#2: Run 100 Random Dijkstra tests" id="btn_DJKGraph2" style="visibility: hidden" /><br/>
+	<br/>
 </body>
 </html>

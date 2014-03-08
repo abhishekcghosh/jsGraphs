@@ -108,7 +108,8 @@ Vertex.prototype.attachVertex = function (refVertex, requestBD, edgeWeight) {
 	var i, alreadyExists = false;
 	var id = refVertex.getId();	
 	var newEdge = new Edge(id, edgeWeight);	
-	for (i = 0; i < this.conn.length; i++) {
+	var connLength = this.conn.length;
+	for (i = 0; i < connLength; i++) {
 		if (this.conn[i].isEqualToEdge(newEdge) == true) { 				
 			// already connected, so dont create duplicate values, 
 			alreadyExists = true;
@@ -133,7 +134,8 @@ Vertex.prototype.detachVertex = function (refVertex) {
 	var i;
 	// go through each item of the connections array, 
 	// remove all with provided id
-	for(i = 0; i < this.conn.length; i++) {
+	var connLength = this.conn.length;
+	for(i = 0; i < connLength; i++) {
 		if (this.conn[i].getDestination() == refVertex.getId()) {
 			this.conn.splice(i, 1);
 		}
@@ -144,7 +146,8 @@ Vertex.prototype.detachVertex = function (refVertex) {
 Vertex.prototype.stringifyConnections = function () {
 	var i;
 	var edgeStr = "";
-	for (i = 0; i < this.conn.length; i++) {
+	var connLength = this.conn.length;
+	for (i = 0; i < connLength; i++) {
 		edgeStr += "{Vertex[" + this.conn[i].getDestination() + "], Weight:" + this.conn[i].getWeight() + "}, ";
 	}
 	edgeStr = edgeStr.substr(0, edgeStr.length - 2);
@@ -173,7 +176,8 @@ Graph.prototype.setGraphName = function (newName) {
 // graph vertex getter
 Graph.prototype.getVertex = function (vertexId) {
 	var i;
-	for (i = 0; i < this.vertices.length; i++) {
+	var vertLength = this.vertices.length;
+	for (i = 0; i < vertLength; i++) {
 		if (this.vertices[i].getId() == vertexId) {
 			// found required vertex, return
 			return this.vertices[i];
@@ -193,12 +197,23 @@ Graph.prototype.getVertex = function (vertexId) {
 // also, other of json doesn't need to be sequential for the vertices, but keep in mind that the total number 
 // of vertices equal to the numbering of the vertices for convenience... 
 Graph.prototype.createGraphFromJSON = function (jsonGraph) {
-	var requestBD = jsonGraph.properties.bidirectionalEdges;
+	
+	if (jsonGraph.hasOwnProperty("graphName")) {
+		this.setGraphName(jsonGraph.graphName);
+	}
+	var requestBD = false;
+	if (jsonGraph.hasOwnProperty("properties")) {
+		if (jsonGraph.properties.hasOwnProperty("bidirectionalEdges")) {
+			requestBD = jsonGraph.properties.bidirectionalEdges;
+		}
+	}	
+
 	if (jsonGraph.vertices instanceof Array) {
 		// check if multiple vertices are at all present, then loop over
 		this.vertices = new Array(jsonGraph.vertices.length);
 		var i, v, vi;
-		for (i = 0; i < jsonGraph.vertices.length; i++) {
+		var vertLength = jsonGraph.vertices.length;
+		for (i = 0; i < vertLength; i++) {
 			v = jsonGraph.vertices[i];
 			// want to keep program internal logic of vertices and json naming separate, 
 			// so create nodes following data instead of directly using the json objects
@@ -210,13 +225,15 @@ Graph.prototype.createGraphFromJSON = function (jsonGraph) {
 		}
 		// now create the connections,
 		var vDest, vWeight;
-		for (i = 0; i < jsonGraph.vertices.length; i++) {
+		vertLength = jsonGraph.vertices.length;
+		for (i = 0; i < vertLength; i++) {
 			v = jsonGraph.vertices[i];
 			if (v.hasOwnProperty("conn")) {
 				if (v.conn instanceof Array) {
 					// loop for creating the connections
 					var j;
-					for (j = 0; j < v.conn.length; j++) {
+					var connLength = v.conn.length;
+					for (j = 0; j < connLength; j++) {
 						vDest = v.conn[j].dest;
 						// if edge has weight						
 						if (v.conn[j].hasOwnProperty("weight")) {
@@ -249,7 +266,8 @@ Graph.prototype.displayGraph = function () {
 	var i;
 	var graphStr = "", vertextStr = "";
 	graphStr += "\nDisplaying data for graph: " + this.graphName + "\n";
-	for (i = 0; i < this.vertices.length; i++) {
+	var vertLength = this.vertices.length; 
+	for (i = 0; i < vertLength; i++) {
 		// loop vertices, stringify them and print
 		vertexStr = this.vertices[i].stringifyConnections();
 		if (vertexStr == "") {
@@ -297,7 +315,8 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 	// path tracing
 	var dfsPath = [];
 	var prevVertex = new Array(this.vertices.length);
-	for (i = 0; i < prevVertex.length; i++) { prevVertex[i] = -1; }	
+	var prevVertLength = prevVertex.length;
+	for (i = 0; i < prevVertLength; i++) { prevVertex[i] = -1; }	
 	// verbose feedback
 	var verboseStr = "";
 	if (verbose) { verboseStr += "Starting Depth-First Search for Vertex [" + searchVertex +"] from Vertex [" + startFromVertex + "].\n" }
@@ -325,8 +344,9 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 				return { searchResult: true, verboseData: verboseStr, pathTrace: dfsPath.join(" <= "), pathLength: (dfsPath.length - 1) };
 			}
 			// label this vertex as discovered
-			markedVertex[i] = true;			
-			for (j = 0; j < this.vertices[i].conn.length; j++) {
+			markedVertex[i] = true;		
+			var vertConnLength = this.vertices[i].conn.length;
+			for (j = 0; j < vertConnLength; j++) {
 				// add vertex to stack
 				vStack.push(this.vertices[i].conn[j].dest);
 				// add to prevVertex for path tracing later
@@ -381,7 +401,8 @@ Graph.prototype.breadthFirstSearch = function (searchVertex, startFromVertex, ve
 	// path tracing
 	var bfsPath = [];
 	var prevVertex = new Array(this.vertices.length);
-	for (i = 0; i < prevVertex.length; i++) { prevVertex[i] = -1; }	
+	var prevVertLength = prevVertex.length;
+	for (i = 0; i < prevVertLength; i++) { prevVertex[i] = -1; }	
 	// verbose feedback
 	var verboseStr = "";
 	if (verbose) { verboseStr += "Starting Breadth-First Search for Vertex [" + searchVertex +"] from Vertex [" + startFromVertex + "].\n" }
@@ -410,7 +431,8 @@ Graph.prototype.breadthFirstSearch = function (searchVertex, startFromVertex, ve
 			}
 			// label this vertex as discovered
 			markedVertex[i] = true;
-			for (j = 0; j < this.vertices[i].conn.length; j++) {
+			var vertConnLength = this.vertices[i].conn.length;
+			for (j = 0; j < vertConnLength; j++) {
 				// add vertex to stack
 				vQueue.push(this.vertices[i].conn[j].dest);
 				// add to prevVertex for path tracing later
@@ -464,7 +486,8 @@ Graph.prototype.dijkstra = function (searchVertex, startFromVertex, verbose) {
 		var i, minP, minPi;
 		minP = this.qP[0];
 		minPi = 0;
-		for (i = 0; i < this.qP.length; i++) {
+		var qPLength = this.qP.length;
+		for (i = 0; i < qPLength; i++) {
 			if (minP > this.qP[i]) {
 				minP = this.qP[i];
 				minPi = i;
@@ -479,7 +502,8 @@ Graph.prototype.dijkstra = function (searchVertex, startFromVertex, verbose) {
 		var vId = vertex.getId();
 		var i;
 		var indx = null;
-		for(i = 0; i < this.qV.length; i++) {
+		var qVLength = this.qV.length;
+		for(i = 0; i < qVLength; i++) {
 			if (this.qV[i].getId() == vId) {
 				indx = i;
 				break;
@@ -491,8 +515,9 @@ Graph.prototype.dijkstra = function (searchVertex, startFromVertex, verbose) {
 	}
 	PQueue.prototype.stringifyPQ = function () {
 		var i; 
-		var PQStr = ""
-		for (i = 0; i < this.qV.length; i++) {
+		var PQStr = "";
+		var qVLength = this.qV.length;
+		for (i = 0; i < qVLength; i++) {
 			PQStr += this.qV[i].getId() + ", ";
 		}
 
@@ -509,7 +534,8 @@ Graph.prototype.dijkstra = function (searchVertex, startFromVertex, verbose) {
 	distArr[startFromVertex] = 0;
 	if (verbose) { verboseStr += "\nSet Distances from [Starting Vertex] to [Starting Vertex] to 0."; }
 
-	for (i = 0; i < this.vertices.length; i++) {
+	var vertLength = this.vertices.length;
+	for (i = 0; i < vertLength; i++) {
 		if (this.vertices[i].getId() != startFromVertex) {distArr[this.vertices[i].getId()] = Infinity; }		
 		prevArr[this.vertices[i].getId()] = -1;
 		PQ.addWithPriority(this.vertices[i], distArr[this.vertices[i].getId()]);		
@@ -529,8 +555,9 @@ Graph.prototype.dijkstra = function (searchVertex, startFromVertex, verbose) {
 			break;
 		}
 		if (verbose) { verboseStr += "\nExtracted MinPriority Vertex[" + currVertex.getId() + "] from PQueue."; }
-		if (verbose) { verboseStr += "\n PQueue Status: " + PQ.stringifyPQ() };		
-		for (i = 0; i < currVertex.conn.length; i++) {
+		if (verbose) { verboseStr += "\n PQueue Status: " + PQ.stringifyPQ() };	
+		var connLength = currVertex.conn.length; 	
+		for (i = 0; i < connLength; i++) {
 			relDist = distArr[currVertex.getId()] + currVertex.conn[i].weight;
 			//console.log (relDist + ": for a connected vertex[" + currVertex.conn[i].dest + "] of vertex[" + currVertex.getId() + "]");
 			if (relDist < distArr[currVertex.conn[i].dest]) {
@@ -562,3 +589,52 @@ Graph.prototype.dijkstra = function (searchVertex, startFromVertex, verbose) {
 	}
 
 }
+
+// a random graph generator
+function giveMeAGraph (graphName, vertexCount, bidirectional, weighed, minWeight, maxWeight) {
+	
+	var graph = new Graph(graphName);
+
+	var i, v;
+	for(i = 0; i < vertexCount; i++) {
+		// create a new vertex, add to graph
+		v = new Vertex(i);
+		graph.vertices.push(v);
+	}
+
+	var j, numberOfEdges, connectedVertex, weight;
+	var connectedTo = [];
+	// for each of the vertices
+	for (i = 0; i < vertexCount; i++) {		
+		// generate a random number of connections (edges) (0.1 to reduce number of edges, increase traversal distancess)
+		numberOfEdges = Math.floor(Math.random() * vertexCount / 10);
+		connectedTo = [];
+		// and for each of these edges
+		for (j = 0; j < numberOfEdges; j++) {
+			// generate a random vertex id to connect to			
+			connectedVertex = Math.floor(Math.random() * vertexCount);
+			// if randomly generated connected vertex id comes to be this vertex itself or one that is already connected,
+			while (connectedVertex == i || connectedTo.indexOf(connectedVertex) > -1) {
+				// try again to generate
+				connectedVertex = Math.floor(Math.random() * vertexCount);
+			}
+			// once satisfied with a generated connection
+			// keep track of connections
+			connectedTo.push(connectedVertex);
+			// if weighed, generate an integer weight (between minWeight and maxWeight)
+			if (weighed) {
+				weight = parseInt(minWeight) + parseInt(Math.floor(Math.random() * (parseInt(maxWeight) - parseInt(minWeight))));
+			} else {
+				// weight is zero if not weighed graph
+				weight = 0;
+			}
+			// add the edge to the vertex
+			graph.vertices[i].attachVertex(graph.vertices[connectedVertex], bidirectional, weight);
+		}
+		//console.log (i + ": " + connectedTo.join(", "));
+	}
+
+	// after graph generation, return graph;
+	return graph;
+}
+
