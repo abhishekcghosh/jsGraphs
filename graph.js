@@ -48,6 +48,28 @@ function Edge(destination, edgeWeight) {
 	this.dest = destination;
 	this.weight = edgeWeight;
 }
+// dest getters and setters
+Edge.prototype.getDestination = function () {
+	return this.dest;
+}
+Edge.prototype.setDestination = function (newDest) {
+	this.dest = newDest;
+}
+// weight getters and setters
+Edge.prototype.getWeight = function () {
+	return this.weight;
+}
+Edge.prototype.setWeight = function (newWeight) {
+	this.weight = newWeight;
+}
+// edge compare
+Edge.prototype.isEqualToEdge = function (refEdge) {
+	if (this.dest == refEdge.getDestination() && this.weight == refEdge.getWeight()) {
+		return true;
+	}
+	return false;
+}
+
 
 // create a vertex (or node)
 function Vertex(id) {
@@ -84,34 +106,35 @@ Vertex.prototype.attachVertex = function (refVertex, requestBD, edgeWeight) {
 	}
 	// check if connection already exists on this side
 	var i, alreadyExists = false;
-	var id = refVertex.getId();
+	var id = refVertex.getId();	
+	var newEdge = new Edge(id, edgeWeight);	
 	for (i = 0; i < this.conn.length; i++) {
-		if (this.conn[i] == id) {
+		if (this.conn[i].isEqualToEdge(newEdge) == true) { 				
 			// already connected, so dont create duplicate values, 
 			alreadyExists = true;
 			break;
 		}
 	}
 	if (alreadyExists == false) {
-		this.conn.push(id);	
+		this.conn.push(newEdge); 										
 	}
 	if (requestBD == true) {
 		// request for other vertex to add this vertex
 		// here, note that the requestBD for this call 
 		// will obviously be false (pitfall otherwise)
-		refVertex.attachVertex(this, false);
+		refVertex.attachVertex(this, false, edgeWeight);
 	}
 };
 
 // destroy any edges, between this vertex and vertex with provided id
 // although duplication prevention code is written in attachVertex() itself,
 // still going for a thorough check for duplicate entries and removing al of them
-Vertex.prototype.detachVertex = function (id) {
+Vertex.prototype.detachVertex = function (refVertex) {
 	var i;
 	// go through each item of the connections array, 
 	// remove all with provided id
 	for(i = 0; i < this.conn.length; i++) {
-		if (this.conn[i] == id) {
+		if (this.conn[i].getDestination() == refVertex.getId()) {
 			this.conn.splice(i, 1);
 		}
 	}
@@ -119,7 +142,13 @@ Vertex.prototype.detachVertex = function (id) {
 
 // stingify all connections and print
 Vertex.prototype.stringifyConnections = function () {
-	return this.conn.join(", ");
+	var i;
+	var edgeStr = "";
+	for (i = 0; i < this.conn.length; i++) {
+		edgeStr += "{Vertex[" + this.conn[i].getDestination() + "], Weight:" + this.conn[i].getWeight() + "}, ";
+	}
+	edgeStr = edgeStr.substr(0, edgeStr.length - 2);
+	return edgeStr; 													
 }
 
 
@@ -145,7 +174,7 @@ Graph.prototype.setGraphName = function (newName) {
 Graph.prototype.getVertex = function (vertexId) {
 	var i;
 	for (i = 0; i < this.vertices.length; i++) {
-		if (this.vertices[i].id == vertexId) {
+		if (this.vertices[i].getId() == vertexId) {
 			// found required vertex, return
 			return this.vertices[i];
 		}
@@ -163,39 +192,6 @@ Graph.prototype.getVertex = function (vertexId) {
 // case #1: multiple connections, so just omit the "conn" property itself; for ex, the vertex becomes { "id": 5 }
 // also, other of json doesn't need to be sequential for the vertices, but keep in mind that the total number 
 // of vertices equal to the numbering of the vertices for convenience... 
-/*
-	{		
-		"vertices" : [
-			{
-				"id" : 0,
-				"conn" : [1, 2]
-			},
-			{
-				"id" : 1,
-				"conn" : [2, 3, 4]
-			},
-			{
-				"id" : 2,
-				"conn" : [3, 4]
-			},
-			{
-				"id" : 3,
-				"conn" : [4, 5]
-			},
-			{
-				"id" : 5
-			},
-			{
-				"id" : 4,
-				"conn" : 5
-			}			
-		],
-		"properties" : 
-			{
-				"bidirectionalEdges" : true
-			}
-	}
-*/
 Graph.prototype.createGraphFromJSON = function (jsonGraph) {
 	var requestBD = jsonGraph.properties.bidirectionalEdges;
 	if (jsonGraph.vertices instanceof Array) {
@@ -213,6 +209,7 @@ Graph.prototype.createGraphFromJSON = function (jsonGraph) {
 			this.vertices[v.id] = vi;
 		}
 		// now create the connections,
+		var vDest, vWeight;
 		for (i = 0; i < jsonGraph.vertices.length; i++) {
 			v = jsonGraph.vertices[i];
 			if (v.hasOwnProperty("conn")) {
@@ -220,12 +217,28 @@ Graph.prototype.createGraphFromJSON = function (jsonGraph) {
 					// loop for creating the connections
 					var j;
 					for (j = 0; j < v.conn.length; j++) {
-						this.vertices[v.id].attachVertex(this.vertices[v.conn[j]], requestBD);
+						vDest = v.conn[j].dest;
+						// if edge has weight						
+						if (v.conn[j].hasOwnProperty("weight")) {
+							vWeight = v.conn[j].weight;							
+						} else {
+							// default weight to 0
+							vWeight = 0;
+						}
+						this.vertices[v.id].attachVertex(this.vertices[vDest], requestBD, vWeight);
 					}
 				} else {
 					// only one connection, go ahead
-					this.vertices[v.id].attachVertex(this.vertices[v.conn], requestBD);
+					// if has weight mentioned
+					if (v.conn.hasOwnProperty("weight")) {
+						vWeight = v.conn.weight;
+					} else {
+						vWeight = 0;
+					}
+					this.vertices[v.id].attachVertex(this.vertices[v.conn.dest], requestBD, vWeight);
 				}
+			} else {
+				// no edges defined, this.conn remains []
 			}
 		}
 	}
@@ -242,7 +255,7 @@ Graph.prototype.displayGraph = function () {
 		if (vertexStr == "") {
 			vertexStr = "None";
 		}
-		graphStr += " Vertex[" + i + "]. Connected with: " + vertexStr + "\n"; 
+		graphStr += " Vertex[" + i + "]: Connected with: " + vertexStr + "\n"; 
 	}
 	return graphStr;	
 }

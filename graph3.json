@@ -1,0 +1,74 @@
+{		
+	"vertices" : [
+		{
+			"id" : 0,
+			"conn" : [
+						{ 
+							"dest": 1, 
+							"weight": 10
+						},
+						{ 
+							"dest": 2, 
+							"weight": 10
+						}
+			]
+		},
+		{
+			"id" : 1,
+			"conn" : [
+						{ 
+							"dest": 2, 
+							"weight": 10
+						},
+						{ 
+							"dest": 3, 
+							"weight": 10
+						},
+						{ 
+							"dest": 4, 
+							"weight": 10
+						}
+			]
+		},
+		{
+			"id" : 2,
+			"conn" : [
+						{ 
+							"dest": 3, 
+							"weight": 10
+						},
+						{ 
+							"dest": 4, 
+							"weight": 10
+						}
+			]
+		},
+		{
+			"id" : 3,
+			"conn" : [
+						{ 
+							"dest": 4, 
+							"weight": 10
+						},
+						{ 
+							"dest": 5, 
+							"weight": 10
+						}
+			]
+		},
+		{
+			"id" : 5
+		},
+		{
+			"id" : 4,
+			"conn" : {
+						"dest": 5
+					}
+		}
+		
+	],
+	"properties" : 
+		{
+			"bidirectionalEdges" : true
+		}
+}

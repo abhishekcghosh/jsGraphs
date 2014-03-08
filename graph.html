@@ -118,14 +118,15 @@
 					document.getElementById("consoleLike").value = "";
 				});
 				document.getElementById("btn_loadGraph1").addEventListener("click", function () {
-					writeToConsoles("\nLoading Graph1.JSON...");
+					var fileName = "graph3.json";
+					writeToConsoles("\nLoading " + fileName + "...");
 					xhr1 = getXMLHttp();
-				 	xhr1.open("GET", "graph1.json", true);
+				 	xhr1.open("GET", "graph3.json", true);
 				 	xhr1.send(null);
 				 	xhr1.onreadystatechange = function () {
 				 		if (xhr1.readyState == 4) {
 				 			graphData1 = JSON.parse(xhr1.responseText);
-				 			graph1 = new Graph("GRAPH_1");
+				 			graph1 = new Graph(fileName);
 				 			graph1.createGraphFromJSON(graphData1);
 				 			writeToConsoles(graph1.displayGraph());
 				 			writeToConsoles("\n");				 			
@@ -136,14 +137,15 @@
 				 	document.getElementById("btn_BFSGraph1").style.visibility = "visible";
 				});
 				document.getElementById("btn_loadGraph2").addEventListener("click", function () {
-					writeToConsoles("\nLoading Graph2.JSON...");
+					var fileName = "graph4.json";
+					writeToConsoles("\nLoading "+ fileName + "...");
 					xhr2 = getXMLHttp();
-				 	xhr2.open("GET", "graph2.json", true);
+				 	xhr2.open("GET", "graph4.json", true);
 				 	xhr2.send(null);
 				 	xhr2.onreadystatechange = function () {
 				 		if (xhr2.readyState == 4) {
 				 			graphData2 = JSON.parse(xhr2.responseText);
-				 			graph2 = new Graph("GRAPH_2");
+				 			graph2 = new Graph(fileName);
 				 			graph2.createGraphFromJSON(graphData2);
 				 			writeToConsoles(graph2.displayGraph());
 				 			writeToConsoles("\n");
@@ -194,15 +196,15 @@
 	<textarea class="consoleLike" id="consoleLike">
 	</textarea>
 	<br/>
-	<input type="button" value="Load Graph1.JSON" id="btn_loadGraph1" />
-	<input type="button" value="Dump Graph1" id="btn_DumpGraph1" style="visibility: hidden" />
-	<input type="button" value="DFS Graph1.JSON" id="btn_DFSGraph1" style="visibility: hidden" />
-	<input type="button" value="BFS Graph1.JSON" id="btn_BFSGraph1" style="visibility: hidden" />
+	<input type="button" value="Load 1" id="btn_loadGraph1" />
+	<input type="button" value="Dump 1" id="btn_DumpGraph1" style="visibility: hidden" />
+	<input type="button" value="DFS 1" id="btn_DFSGraph1" style="visibility: hidden" />
+	<input type="button" value="BFS 1" id="btn_BFSGraph1" style="visibility: hidden" />
 	<br/>
-	<input type="button" value="Load Graph2.JSON" id="btn_loadGraph2" />
-	<input type="button" value="Dump Graph2" id="btn_DumpGraph2" style="visibility: hidden" />
-	<input type="button" value="DFS Graph2.JSON" id="btn_DFSGraph2" style="visibility: hidden" />
-	<input type="button" value="BFS Graph2.JSON" id="btn_BFSGraph2" style="visibility: hidden" />
+	<input type="button" value="Load 2" id="btn_loadGraph2" />
+	<input type="button" value="Dump 2" id="btn_DumpGraph2" style="visibility: hidden" />
+	<input type="button" value="DFS 2" id="btn_DFSGraph2" style="visibility: hidden" />
+	<input type="button" value="BFS 2" id="btn_BFSGraph2" style="visibility: hidden" />
 	<br/>
 	<input type="button" value="Clear Console" id="btn_clearConsoleLike" />
 	
