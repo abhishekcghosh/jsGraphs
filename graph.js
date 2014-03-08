@@ -2,7 +2,7 @@
 // Abhishek Ghosh
 
 
-// ------------------------------------------------------------------------------------
+// THE VERTEX ------------------------------------------------------------------------------------
 // create a vertex (or node)
 function Vertex(id) {
 	this.id = id;
@@ -73,7 +73,7 @@ Vertex.prototype.stringifyConnections = function () {
 }
 
 
-// --------------------------------------------------------------------------------
+// THE GRAPH --------------------------------------------------------------------------------
 // create a graph object
 function Graph(graphName) {
 	if (typeof graphName == "undefined") {
@@ -89,6 +89,19 @@ Graph.prototype.getGraphName = function () {
 }
 Graph.prototype.setGraphName = function (newName) {
 	this.graphName = newName;
+}
+
+// graph vertex getter
+Graph.prototype.getVertex = function (vertexId) {
+	var i;
+	for (i = 0; i < this.vertices.length; i++) {
+		if (this.vertices[i].id == vertexId) {
+			// found required vertex, return
+			return this.vertices[i];
+		}
+	}
+	// not found
+	return null;
 }
 
 // obtain a json data of a graph representation
@@ -192,6 +205,15 @@ Graph.prototype.displayGraph = function () {
 //	1. searchVertex  - the vertex id of the vertex to search for
 //  2. startFromNode - the vertex id to start the search from. 						
 //	3. verbose - [optional = false] boolean to determine if detailed DFS traversal data is generated
+// the returned object structure is as follows:
+/*
+	{
+		searchResult : 	[boolean] (true or false depending on if path is found),
+		verboseData  : 	[string]  (total stack trace data for the algorithm run if verbose mode selected), 
+		pathTrace    : 	[string]  (visual representation of path found or "Path not found!), 
+		pathLength   : 	[number]  (length of the path found, or null if not found)
+	}
+*/
 Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verbose) {	
 	if (typeof startFromVertex == "undefined") {
 		startFromVertex = this.vertices[0].id;
@@ -259,8 +281,23 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 
 // GRAPH TRAVERSALS - BREADTH-FIRST-SEARCH
 // this function implements a BFS algo in the graph.
+// BFS returns the SHORTEST-PATH from source vertex 
+// to destination vertex if such a path exists.
 // The purpose is very simple, to generate a BFS searchResult
 // for a given vertex with id from a source vertex
+// accepts 3 parameters
+//	1. searchVertex  - the vertex id of the vertex to search for
+//  2. startFromNode - the vertex id to start the search from. 						
+//	3. verbose - [optional = false] boolean to determine if detailed DFS traversal data is generated
+// the returned object structure is as follows:
+/*
+	{
+		searchResult : 	[boolean] (true or false depending on if path is found),
+		verboseData  : 	[string]  (total stack trace data for the algorithm run if verbose mode selected), 
+		pathTrace    : 	[string]  (visual representation of path found or "Path not found!), 
+		pathLength   : 	[number]  (length of the path found, or null if not found)
+	}
+*/
 Graph.prototype.breadthFirstSearch = function (searchVertex, startFromVertex, verbose) {
 	if (typeof startFromVertex == "undefined") {
 		startFromVertex = this.vertices[0].id;
