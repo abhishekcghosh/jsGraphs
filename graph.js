@@ -277,9 +277,10 @@ Graph.prototype.displayGraph = function () {
 		pathLength   : 	[number]  (length of the path found, or null if not found)
 	}
 */
+// NOTE: IMPLEMENTED DFS ALGORITHM IS EDGE-WEIGHT INDEPENDENT 
 Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verbose) {	
 	if (typeof startFromVertex == "undefined") {
-		startFromVertex = this.vertices[0].id;
+		startFromVertex = this.vertices[0].getId();
 	}
 	if (typeof verbose == "undefined") {
 		verbose = false;
@@ -294,7 +295,7 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 	var startVertex = this.vertices[startFromVertex];
 	var i, j;
 	// path tracing
-	var bfsPath = [];
+	var dfsPath = [];
 	var prevVertex = new Array(this.vertices.length);
 	for (i = 0; i < prevVertex.length; i++) { prevVertex[i] = -1; }	
 	// verbose feedback
@@ -311,26 +312,26 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 		if (markedVertex[i] != true) {
 			if (verbose) { verboseStr += "Reached Vertex[" + i + "]\n"; }
 			// check if we found our required vertex
-			if (this.vertices[i].id == searchVertex) {
+			if (this.vertices[i].getId() == searchVertex) {
 				// yay! we dound our vertex
 				// trace the path
 				var pathTraceItem = searchVertex;
 				while(pathTraceItem != startFromVertex) {
-					bfsPath.push(pathTraceItem);
+					dfsPath.push(pathTraceItem);
 					pathTraceItem = prevVertex[pathTraceItem];
 				}
-				bfsPath.push(startFromVertex);
+				dfsPath.push(startFromVertex);
 				if (verbose) { verboseStr += "Yay! We just found Vertex [" + searchVertex +"] !!!\n"; } 
-				return { searchResult: true, verboseData: verboseStr, pathTrace: bfsPath.join(" <- "), pathLength: (bfsPath.length - 1) };
+				return { searchResult: true, verboseData: verboseStr, pathTrace: dfsPath.join(" <- "), pathLength: (dfsPath.length - 1) };
 			}
 			// label this vertex as discovered
 			markedVertex[i] = true;			
 			for (j = 0; j < this.vertices[i].conn.length; j++) {
 				// add vertex to stack
-				vStack.push(this.vertices[i].conn[j]);
+				vStack.push(this.vertices[i].conn[j].dest);
 				// add to prevVertex for path tracing later
-				if (prevVertex[this.vertices[i].conn[j]] == -1)  { prevVertex[this.vertices[i].conn[j]] = i; }
-				if (verbose) { verboseStr += "Pushed Vertex [" + this.vertices[i].conn[j] +"] into Stack\n"; }	
+				if (prevVertex[this.vertices[i].conn[j].dest] == -1)  { prevVertex[this.vertices[i].conn[j].dest] = i; }
+				if (verbose) { verboseStr += "Pushed Vertex [" + this.vertices[i].conn[j].dest +"] into Stack\n"; }	
 			}								
 		} else {
 			// nothing here too, simply popping the next vertex next 
@@ -361,9 +362,12 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 		pathLength   : 	[number]  (length of the path found, or null if not found)
 	}
 */
+// NOTE: IMPLEMENTED BFS ALGORITHM IS EDGE-WEIGHT INDEPENDENT 
+// IF YOU ARE LOOKING FOR A LEAST-WEIGHT SHORTEST PATH ALGORITHM, 
+// REFER TO DJIKSTRA'S ALGORITHM
 Graph.prototype.breadthFirstSearch = function (searchVertex, startFromVertex, verbose) {
 	if (typeof startFromVertex == "undefined") {
-		startFromVertex = this.vertices[0].id;
+		startFromVertex = this.vertices[0].getId();
 	}
 	if (typeof verbose == "undefined") {
 		verbose = false;
@@ -407,10 +411,10 @@ Graph.prototype.breadthFirstSearch = function (searchVertex, startFromVertex, ve
 			markedVertex[i] = true;
 			for (j = 0; j < this.vertices[i].conn.length; j++) {
 				// add vertex to stack
-				vQueue.push(this.vertices[i].conn[j]);
+				vQueue.push(this.vertices[i].conn[j].dest);
 				// add to prevVertex for path tracing later
-				if (prevVertex[this.vertices[i].conn[j]] == -1)  { prevVertex[this.vertices[i].conn[j]] = i; }
-				if (verbose) { verboseStr += "Enqueued Vertex [" + this.vertices[i].conn[j] +"] into Queue\n"; }						
+				if (prevVertex[this.vertices[i].conn[j].dest] == -1)  { prevVertex[this.vertices[i].conn[j].dest] = i; }
+				if (verbose) { verboseStr += "Enqueued Vertex [" + this.vertices[i].conn[j].dest +"] into Queue\n"; }						
 			}	
 		} else {
 			// already visited this vertex
