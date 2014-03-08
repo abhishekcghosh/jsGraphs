@@ -5,32 +5,37 @@
 	body {
 		font-family: "Courier New", "Lucida Console", Monotype;
 		font-size: 1em;
-		background-color: teal;
-		color: white;
+		background-color: #111;
+		color: #DD4814;
+		margin: 0px;
+		padding: 0px;
+		border: none;
 	}
 	.consoleLike {
 		margin: 10px 0px;
-		border: 2px dotted white;
-		background-color: black;
-		color: yellow;
+		border: 1px solid #333333;
+		background-color: #2C001E;
+		color: #FFF;
 		padding: 10px;
 		height: 400px;
-		width: 80%;
-		overflow: scroll;
+		width: 98%;
+		overflow-y: scroll;
 
 	}
 	input[type="button"] {
-		background-color: #333;
-		border: 2px solid black;
-		color: yellow;
+		background-color: #2C001E;
+		border: 2px solid #5E2750;
+		color: #fff;
 		cursor: pointer;
 		padding: 4px;
 		font-family: "Courier New", "Lucida Console", Monotype;
 		font-size: 0.8em;
 	}
 	input[type="button"]:hover {
-		background-color: #666;
+		background-color: #DD4814;
+		color: #000;
 	}
+
 </style>
 	<script type="text/javascript" src="graph.js"></script>
 	<script type="text/javascript">
@@ -213,6 +218,8 @@
 					writeToConsoles(JSON.stringify(graph2, null, 4));
 				});
 
+				console.log("Just thought that using colors from the Ubuntu palette will be fun ;)");
+
 			} else {
 				//window.attachEvent("load", runGraphTest);
 			}
@@ -223,9 +230,8 @@
 <body>
 	<code>
 		<strong>
-		Graph Theory + JSON + XMLHttp Experiments in JS</strong><br/>
-		Abhishek Ghosh [github.com/abhishekcghosh]<br/>
-		-----------------------------------------------<br/>
+		Graph Theory + JSON + XMLHttp Experiments in JS</strong>: 
+		Abhishek Ghosh [github.com/abhishekcghosh]<br/>		
 		Hint: <br/>
 		* View Browser Console for more information.<br/>		
 		* Enable "Log XMLHttpRequests" for better results.
