@@ -190,12 +190,9 @@ Graph.prototype.displayGraph = function () {
 // with a given vertex id.
 // accepts 3 parameters
 //	1. searchVertex  - the vertex id of the vertex to search for
-//  2. startFromNode - the vertex id to start the search from. 
-//						[optional, takes the first node found the 
-//						the graph is not given]
-//	3. verbose - boolean to determine if detailed DFS traversal data is generated
-Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verbose) {
-	// default startFromNode to zeroth vertex id if not supplied
+//  2. startFromNode - the vertex id to start the search from. 						
+//	3. verbose - [optional = false] boolean to determine if detailed DFS traversal data is generated
+Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verbose) {	
 	if (typeof startFromVertex == "undefined") {
 		startFromVertex = this.vertices[0].id;
 	}
@@ -230,31 +227,66 @@ Graph.prototype.depthFirstSearch = function (searchVertex, startFromVertex, verb
 				return { searchResult: true, verboseData: verboseStr };
 			}
 			// label this vertex as discovered
-			markedVertex[i] = true;
-			//console.log (markedVertex.join(","));
-			if (this.vertices[i].hasOwnProperty("conn")) {
-				// some edges linked to this vertex exists
-				// if multiple edges exist
-				if (this.vertices[i].conn instanceof Array) {
-					// loop, add vertices to the stack
-					for (j = 0; j < this.vertices[i].conn.length; j++) {
-						// add vertex to stack
-						vStack.push(this.vertices[i].conn[j]);
-						if (verbose) { verboseStr += "Pushed Vertex [" + this.vertices[i].conn[j] +"] into Stack\n"; }						
-					}
-				} else {
-					// only one edge exists, add to stack
-					vStack.push(this.vertices[i].conn);
-					if (verbose) { verboseStr += "Pushed Vertex [" + this.vertices[i].conn +"] into Stack\n"; }					
-				}
-			} else {
-				// no edges linked to this vertex exists
-				// nothing to do here actually
-				// this condition will not even be reached if 
-				// requestBD was true during graph generation from JSON
-			}
+			markedVertex[i] = true;			
+			for (j = 0; j < this.vertices[i].conn.length; j++) {
+				// add vertex to stack
+				vStack.push(this.vertices[i].conn[j]);
+				if (verbose) { verboseStr += "Pushed Vertex [" + this.vertices[i].conn[j] +"] into Stack\n"; }	
+			}								
 		} else {
 			// nothing here too, simply popping the next vertex next 
+		}
+	}
+	// oops, we did not find our search vertex :(
+	if (verbose) { verboseStr += "Oops! We couldn't find the searched Vertex [" + searchVertex +"] :(\n"; }
+	return { searchResult: false, verboseData: verboseStr };
+}
+
+
+// GRAPH TRAVERSALS - BREADTH-FIRST-SEARCH
+// this function implements a BFS algo in the graph.
+// The purpose is very simple, to generate a BFS searchResult
+// for a given vertex with id from a source vertex
+Graph.prototype.breadthFirstSearch = function (searchVertex, startFromVertex, verbose) {
+	if (typeof startFromVertex == "undefined") {
+		startFromVertex = this.vertices[0].id;
+	}
+	if (typeof verbose == "undefined") {
+		verbose = false;
+	}
+	// initiate BFS routine
+	vQueue = [];
+	var markedVertex = new Array(this.vertices.length);
+	var startVertex = this.vertices[startFromVertex];
+	var i, j;
+	var verboseStr = "";
+	if (verbose) { verboseStr += "Starting Breadth-First Search for Vertex [" + searchVertex +"] from Vertex [" + startFromVertex + "].\n" }
+	vQueue.push(startVertex.id);
+	while (vQueue.length > 0) {
+		// dump present stack condition
+		if (verbose) { verboseStr += "BFS Queue Status: [" + vQueue.join(",") + "]\n" ;	}
+		// fetch a vertex to search from the stack
+		i = vQueue.shift();		
+		if (verbose) { verboseStr += "Dequeued Vertex[" + i + "]\n"; }		
+		// if the vertex has yet not been gone through	
+		if (markedVertex[i] != true) {
+			if (verbose) { verboseStr += "Reached Vertex[" + i + "]\n"; }
+			// check if we found our required vertex
+			if (this.vertices[i].id == searchVertex) {
+				// yay! we dound our vertex
+				if (verbose) { verboseStr += "Yay! We just found the searched Vertex [" + searchVertex +"] !!!\n"; } 
+				return { searchResult: true, verboseData: verboseStr };
+			}
+			// label this vertex as discovered
+			markedVertex[i] = true;
+			for (j = 0; j < this.vertices[i].conn.length; j++) {
+				// add vertex to stack
+				vQueue.push(this.vertices[i].conn[j]);
+				if (verbose) { verboseStr += "Enqueued Vertex [" + this.vertices[i].conn[j] +"] into Queue\n"; }						
+			}	
+		} else {
+			// already visited this vertex
+			// nothing much to do here
 		}
 	}
 	// oops, we did not find our search vertex :(
